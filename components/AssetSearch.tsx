@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import { Check, ChevronsUpDown } from 'lucide-react'
-
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -11,6 +10,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList
 } from "@/components/ui/command"
 import {
   Popover,
@@ -19,18 +19,17 @@ import {
 } from "@/components/ui/popover"
 
 const assets = [
-  {
-    value: "reliance",
-    label: "Reliance",
-  },
-  {
-    value: "nifty50",
-    label: "NIFTY 50",
-  },
-  {
-    value: "banknifty",
-    label: "BANKNIFTY",
-  },
+  { value: "aapl", label: "Apple Inc. (AAPL)" },
+  { value: "googl", label: "Alphabet Inc. (GOOGL)" },
+  { value: "msft", label: "Microsoft Corporation (MSFT)" },
+  { value: "amzn", label: "Amazon.com Inc. (AMZN)" },
+  { value: "fb", label: "Meta Platforms Inc. (FB)" },
+  { value: "tsla", label: "Tesla Inc. (TSLA)" },
+  { value: "nvda", label: "NVIDIA Corporation (NVDA)" },
+  { value: "nflx", label: "Netflix Inc. (NFLX)" },
+  { value: "dis", label: "The Walt Disney Company (DIS)" },
+  { value: "nifty50", label: "NIFTY 50 Index" },
+  { value: "banknifty", label: "Bank NIFTY Index" },
 ]
 
 export function AssetSearch() {
@@ -44,7 +43,7 @@ export function AssetSearch() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-full max-w-[300px] justify-between"
         >
           {value
             ? assets.find((asset) => asset.value === value)?.label
@@ -52,9 +51,11 @@ export function AssetSearch() {
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-[300px] p-0">
         <Command>
           <CommandInput placeholder="Search asset..." />
+          <CommandList>
+            
           <CommandEmpty>No asset found.</CommandEmpty>
           <CommandGroup>
             {assets.map((asset) => (
@@ -76,6 +77,7 @@ export function AssetSearch() {
               </CommandItem>
             ))}
           </CommandGroup>
+          </CommandList>
         </Command>
       </PopoverContent>
     </Popover>

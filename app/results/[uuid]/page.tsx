@@ -34,18 +34,26 @@ export default function ResultsPage({ params }: { params: { uuid: string } }) {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <Card className="w-full max-w-3xl mx-auto">
+    <main className="flex min-h-screen w-full p-4">
+      <Card className="flex flex-col w-full h-full">
         <CardHeader>
           <CardTitle>Backtesting Results</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex-grow overflow-auto">
           {/* Display results here */}
           <pre>{JSON.stringify(results, null, 2)}</pre>
         </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button onClick={() => router.push('/')}>Generate New Backtesting Report</Button>
-          <Button onClick={() => router.push('/')}>Alter Your Requirements</Button>
+        <CardFooter className="mt-auto flex flex-col sm:flex-row justify-between gap-4">
+          <Button onClick={() => router.push('/')} className="w-full sm:w-auto">
+            Generate New Backtesting Report
+          </Button>
+          <Button 
+            onClick={() => router.push('/')} 
+            className="w-full sm:w-auto bg-white text-black magical-border"
+            variant="outline"
+          >
+            Alter Your Requirements
+          </Button>
         </CardFooter>
       </Card>
     </main>

@@ -134,7 +134,28 @@ export function BacktestForm() {
           </div>
 
           <div className="space-y-2">
-            <Label>What is the asset (or group of assets) you&apos;re targeting?</Label>
+            <div className="flex items-center space-x-2">
+              <Label htmlFor="asset">What is the asset (or group of assets) you&apos;re targeting?</Label>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>How to Search and Choose Assets</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-2">
+                    <p>To search for an asset:</p>
+                    <ul className="list-disc list-inside">
+                      <li>Click on the asset selection field</li>
+                      <li>Start typing the name of the asset you&apos;re looking for</li>
+                      <li>Select the appropriate asset from the dropdown list</li>
+                    </ul>
+                    <p>You can search for individual stocks, indices, or other financial instruments available in our database.</p>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
             <AssetSearch />
           </div>
 
