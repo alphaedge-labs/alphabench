@@ -16,11 +16,14 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+
+  const paths_without_auth = ['/login', '/signup', '/privacy', '/terms', '/refund', '/contact']
+
   return (
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
-          {pathname === '/login' || pathname === '/signup' ? <AuthHeader /> : <Header />}
+          {paths_without_auth.includes(pathname) ? <AuthHeader /> : <Header />}
           <main className="container mx-auto px-4 py-8">
             {children}
           </main>
