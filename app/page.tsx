@@ -1,13 +1,6 @@
-import { BacktestForm } from '@/components/BacktestForm'
-import { ProtectedRoute } from '@/components/ProtectedRoute'
+import { HomePage } from '@/components/HomePage'
 
 export default function Home() {
-  return (
-    <ProtectedRoute>
-      <main className="container mx-auto px-4 py-8">
-        <BacktestForm />
-      </main>
-    </ProtectedRoute>
-  )
+  return <HomePage />
 }
 

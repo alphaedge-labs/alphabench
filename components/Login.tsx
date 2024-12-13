@@ -2,6 +2,9 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from '@/app/store/store'
+import { login } from '@/app/store/authSlice'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -10,27 +13,19 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 export function Login() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
+  const dispatch = useDispatch<AppDispatch>()
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setIsLoading(true)
 
     const formData = new FormData(event.currentTarget)
-    const data = Object.fromEntries(formData)
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
 
     try {
-      // Replace this with your actual login API call
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      })
-
-      if (response.ok) {
-        router.push('/') // Redirect to home page after successful login
-      } else {
-        throw new Error('Login failed')
-      }
+      await dispatch(login({ email, password })).unwrap()
+      router.push('/') // Redirect to home page after successful login
     } catch (error) {
       console.error('Login error:', error)
       // Handle error (e.g., show error message to user)

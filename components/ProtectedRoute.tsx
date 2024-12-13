@@ -2,23 +2,29 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from './AuthProvider'
+import { useSelector } from 'react-redux'
+
+import { RootState } from '@/app/store/store'
+
 import { Loading } from './Loading'
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth()
+  const { user, isLoading } = useSelector((state: RootState) => state.auth)
   const router = useRouter()
 
   useEffect(() => {
-    if (user === null) {
+    if (!isLoading && user === null) {
       router.push('/login')
     }
-  }, [user, router])
+  }, [user, isLoading, router])
+
+  if (isLoading) {
+    return <Loading />
+  }
 
   if (user === null) {
-    return <Loading />
+    return null
   }
 
   return <>{children}</>
 }
-

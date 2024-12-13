@@ -5,10 +5,16 @@ import { Menu, User } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { SideDrawer } from './SideDrawer'
 import { ProfileMenu } from './ProfileMenu'
+import { LandingHeader } from './LandingHeader'
+import { usePathname } from 'next/navigation'
 
 export function Header() {
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false)
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
+  const pathname = usePathname()
+  const useLandingHeader = ['/', '/privacy', '/about', '/subscription', '/pricing', '/terms'].includes(pathname)
+
+  if (useLandingHeader) return <LandingHeader />;
 
   return (
     <header className="bg-primary text-primary-foreground py-4 px-6 flex items-center justify-between">
