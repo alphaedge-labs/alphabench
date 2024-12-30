@@ -17,9 +17,9 @@ const navigateToApp = () => {
 			</p>
 
 			<div class="cta-buttons">
-				<button class="secondary-btn" @click="router.push('/pricing')">
-					View Pricing
-				</button>
+				<!--<button class="secondary-btn" @click="router.push('/how-to')">
+					How-to
+				</button>-->
 				<button class="primary-btn" @click="navigateToApp">
 					Get Started for Free
 				</button>
@@ -30,6 +30,8 @@ const navigateToApp = () => {
 			<a @click="router.push('/terms')">Terms</a>
 			<span class="separator">•</span>
 			<a @click="router.push('/privacy-policy')">Privacy Policy</a>
+			<span class="separator">•</span>
+			<a @click="router.push('/pricing')">Pricing</a>
 		</div>
 	</div>
 </template>
