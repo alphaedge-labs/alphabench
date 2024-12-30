@@ -49,6 +49,52 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="refunds-section">
+			<div class="refunds-header">
+				<h2 class="refunds-label">Refund Policy</h2>
+			</div>
+			<div class="refunds-content">
+				<section>
+					<p>Please review refund policy below:</p>
+					<ul>
+						<li>
+							<strong>Subscription Cancellations:</strong> If you
+							choose to cancel your subscription at any time
+							during the billing cycle, your subscription will
+							remain active until the end of the current billing
+							period. You will not be charged for the subsequent
+							billing cycle.
+						</li>
+						<li>
+							<strong>Refund Eligibility:</strong> Refunds are
+							considered on a case-by-case basis. To request a
+							refund, please contact our support team within 14
+							days of your subscription renewal date.
+						</li>
+						<li>
+							<strong>Refund Process:</strong> Approved refunds
+							will be processed within 5-7 business days. The
+							refunded amount will be credited back to your
+							original payment method.
+						</li>
+						<li>
+							<strong>Non-Refundable Services:</strong> Please
+							note that certain services or features may be
+							non-refundable. These will be clearly indicated at
+							the time of purchase.
+						</li>
+					</ul>
+					<p>
+						For any questions or to request a refund, please cancel
+						subscription from your profile or contact me at
+						<a href="mailto:corevatsal@gmail.com"
+							>corevatsal@gmail.com</a
+						>.
+					</p>
+				</section>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -283,5 +329,50 @@ const plans = [
 	.pricing-grid {
 		grid-template-columns: repeat(3, 1fr);
 	}
+}
+
+.refunds-section {
+	padding: 2rem 1.5rem;
+	margin: 0 auto;
+	border-radius: 0.5rem;
+}
+
+.refunds-header {
+	text-align: center;
+	max-width: 48rem;
+	margin: 0 auto;
+	margin-top: 4rem;
+}
+
+.refunds-label {
+	color: #535bf2;
+	font-size: 1rem;
+	font-weight: 600;
+	margin-bottom: 1rem;
+}
+
+.refunds-content {
+	font-size: 1rem;
+	color: #4b5563;
+	text-align: left;
+}
+
+.refunds-content ul {
+	list-style-type: disc;
+	margin-left: 1.5rem;
+	margin-top: 1rem;
+}
+
+.refunds-content li {
+	margin-bottom: 0.75rem;
+}
+
+.refunds-content a {
+	color: #535bf2;
+	text-decoration: none;
+}
+
+.refunds-content a:hover {
+	text-decoration: underline;
 }
 </style>
