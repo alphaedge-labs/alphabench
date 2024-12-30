@@ -40,7 +40,10 @@
 				</div>
 
 				<div class="card-footer">
-					<button :class="['cta-button', { primary: index === 1 }]">
+					<button
+						:class="['cta-button', { primary: index === 1 }]"
+						@click="navigateToApp"
+					>
 						{{ plan.cta }}
 					</button>
 				</div>
@@ -49,97 +52,96 @@
 	</div>
 </template>
 
-<script>
-export default {
-	name: "Pricing",
-	data() {
-		return {
-			plans: [
-				{
-					name: "Free",
-					price: "$0",
-					description:
-						"For beginners, hobbyists, and casual investors",
-					features: [
-						"Simple strategies in natural language",
-						"Basic fields: Asset class, date range, simple asset search",
-						"Equity & Mutual Funds (Limited selection)",
-						"Minimal FnO (index futures only)",
-						"Up to 6 months of historical data",
-						"Daily or 30-minute data intervals",
-						"Limited daily requests",
-						"Basic search for well-known securities",
-						"Single-asset, simple strategies",
-						"Basic close-to-close simulations",
-						"Total Return, Win Rate, Maximum Drawdown",
-						"Standard PDF/HTML report",
-						"Basic executive summary & key metrics",
-						"Few pre-built template strategies",
-						"Basic price data (OHLC) only",
-					],
-					cta: "Start Free",
-				},
-				{
-					name: "Pro",
-					price: "$20",
-					description:
-						"For intermediate traders, analysts, and small teams",
-					features: [
-						"Complex, multi-parameter strategies",
-						"Advanced parameters: volatility filters, multiple indicators",
-						"Equities (stocks & ETFs), full Mutual Fund coverage",
-						"Broad FnO (popular futures & options)",
-						"Up to 2 years of historical data",
-						"1-minute and 5-minute intervals available",
-						"Increased daily request limits",
-						"Advanced search with filters",
-						"Multi-asset strategies",
-						"Technical indicators (RSI, MACD)",
-						"Intraday-level simulations with 1-minute granularity",
-						"Sharpe Ratio, Sortino Ratio, Annualized Returns",
-						"Detailed trade statistics",
-						"Extended reports with methodology",
-						"Export to PDF, CSV, Excel",
-						"Expanded library of strategies",
-						"Basic implied volatility for FnO",
-						"Invite 1-2 team members",
-						"Basic commenting on strategies",
-					],
-					cta: "Upgrade to Pro",
-				},
-				{
-					name: "Plus",
-					price: "$40",
-					description:
-						"For professional traders, quantitative researchers, and small funds",
-					features: [
-						"Saved strategy templates for quick re-use",
-						"Custom basket backtesting",
-						"Up to 5+ years of historical data",
-						"Full interval granularity (1-second to 1-day)",
-						"Highest daily request limits",
-						"Bulk selection from watchlists",
-						"Custom asset groupings",
-						"User-defined ticker sets",
-						"Complex, algorithmic strategies",
-						"Dynamic position sizing, advanced volatility models",
-						"Rolling Sharpe, Monte Carlo simulations",
-						"White-labeled, fully customizable reports",
-						"Version-controlled strategy reports",
-						"Strategy sharing within a private community",
-						"Advanced greeks (Delta, Gamma, Theta, Vega)",
-						"Sentiment indicators from integrated market news feeds",
-						"Full API access",
-						"Integrate custom datasets",
-						"Webhook triggers for automated backtesting schedules",
-						"Integration with Slack/Teams notifications",
-					],
-					cta: "Upgrade to Plus",
-				},
-			],
-		};
-	},
+<script setup>
+import { useRouter } from "vue-router";
+import { useAuthStore } from "../../stores/auth";
+
+const router = useRouter();
+
+const navigateToApp = () => {
+	router.push("/app");
 };
+
+const plans = [
+	{
+		name: "Free",
+		price: "$0",
+		description: "For beginners, hobbyists, and casual investors",
+		features: [
+			"Simple strategies in natural language",
+			"Basic fields: Asset class, date range, simple asset search",
+			"Equity & Mutual Funds (Limited selection)",
+			"Minimal FnO (index futures only)",
+			"Up to 6 months of historical data",
+			"Daily or 30-minute data intervals",
+			"Basic search for well-known securities",
+			"Single-asset, simple strategies",
+			"Basic close-to-close simulations",
+			"Total Return, Win Rate, Maximum Drawdown",
+			"Standard PDF/HTML report",
+			"Basic executive summary & key metrics",
+			"Few pre-built template strategies",
+			"Basic price data (OHLC) only",
+		],
+		cta: "Start Free",
+	},
+	{
+		name: "Pro",
+		price: "$20",
+		description: "For intermediate traders, analysts, and small teams",
+		features: [
+			"Complex, multi-parameter strategies",
+			"Advanced parameters: volatility filters, multiple indicators",
+			"Equities (stocks & ETFs), full Mutual Fund coverage",
+			"Broad FnO (popular futures & options)",
+			"Up to 2 years of historical data",
+			"1-minute and 5-minute intervals available",
+			"Increased daily request limits",
+			"Advanced search with filters",
+			"Multi-asset strategies",
+			"Technical indicators (RSI, MACD)",
+			"Intraday-level simulations with 1-minute granularity",
+			"Sharpe Ratio, Sortino Ratio, Annualized Returns",
+			"Detailed trade statistics",
+			"Extended reports with methodology",
+			"Export to PDF, CSV, Excel",
+			"Expanded library of strategies",
+			"Basic implied volatility for FnO",
+			"Invite 1-2 team members",
+			"Basic commenting on strategies",
+		],
+		cta: "Upgrade to Pro",
+	},
+	{
+		name: "Plus",
+		price: "$40",
+		description:
+			"For professional traders, quantitative researchers, and small funds",
+		features: [
+			"Saved strategy templates for quick re-use",
+			"Custom basket backtesting",
+			"Up to 5+ years of historical data",
+			"Full interval granularity (1-second to 1-day)",
+			"Highest daily request limits",
+			"Bulk selection from watchlists",
+			"Custom asset groupings",
+			"User-defined ticker sets",
+			"Complex, algorithmic strategies",
+			"Dynamic position sizing, advanced volatility models",
+			"Rolling Sharpe, Monte Carlo simulations",
+			"White-labeled, fully customizable reports",
+			"Version-controlled strategy reports",
+			"Strategy sharing within a private community",
+			"Advanced greeks (Delta, Gamma, Theta, Vega)",
+			"Sentiment indicators from integrated market news feeds",
+			"Full API access",
+			"Integrate custom datasets",
+			"Webhook triggers for automated backtesting schedules",
+			"Integration with Slack/Teams notifications",
+		],
+		cta: "Upgrade to Plus",
+	},
+];
 </script>
 
 <style scoped>
@@ -163,7 +165,7 @@ export default {
 }
 
 .pricing-title {
-	font-size: 2.5rem;
+	font-size: 2rem;
 	font-weight: 700;
 	color: #111827;
 	line-height: 1.2;

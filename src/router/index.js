@@ -21,6 +21,12 @@ const routes = [
 				component: () => import("../views/public/Home.vue"),
 			},
 			{
+				path: "howto",
+				name: "how to use",
+				meta: { title: "How to use | alphabench" },
+				component: () => import("../views/public/HowTo.vue"),
+			},
+			{
 				path: "pricing",
 				name: "pricing",
 				meta: { title: "Pricing | alphabench" },
