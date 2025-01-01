@@ -70,6 +70,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
+import assets from "../assets/instruments.json";
 
 const props = defineProps({
 	modelValue: {
@@ -79,20 +80,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["update:modelValue"]);
-
-const assets = [
-	{ value: "aapl", label: "Apple Inc. (AAPL)" },
-	{ value: "googl", label: "Alphabet Inc. (GOOGL)" },
-	{ value: "msft", label: "Microsoft Corporation (MSFT)" },
-	{ value: "amzn", label: "Amazon.com Inc. (AMZN)" },
-	{ value: "fb", label: "Meta Platforms Inc. (FB)" },
-	{ value: "tsla", label: "Tesla Inc. (TSLA)" },
-	{ value: "nvda", label: "NVIDIA Corporation (NVDA)" },
-	{ value: "nflx", label: "Netflix Inc. (NFLX)" },
-	{ value: "dis", label: "The Walt Disney Company (DIS)" },
-	{ value: "nifty50", label: "NIFTY 50 Index" },
-	{ value: "banknifty", label: "Bank NIFTY Index" },
-];
 
 const isOpen = ref(false);
 const searchQuery = ref("");
@@ -162,7 +149,7 @@ onUnmounted(() => {
 	position: relative;
 	display: inline-block;
 	width: 100%;
-	max-width: 300px;
+	max-width: 350px;
 	font-family: system-ui, -apple-system, sans-serif;
 }
 
@@ -228,13 +215,14 @@ onUnmounted(() => {
 }
 
 .search-input-wrapper {
+	width: 350px;
 	padding: 0.75rem;
 	border-bottom: 1px solid #e2e8f0;
 	position: relative;
 }
 
 .search-input {
-	padding: 0.625rem 0.75rem 0.625rem 2.25rem;
+	padding: 0.625rem 1.25rem 0.625rem 1.25rem;
 	border: 1px solid #e2e8f0;
 	border-radius: 0.5rem;
 	background: #f8fafc;
@@ -251,7 +239,7 @@ onUnmounted(() => {
 
 .search-icon {
 	position: absolute;
-	left: 2rem;
+	left: 1.5rem;
 	top: 50%;
 	transform: translateY(-50%);
 	width: 1.25rem;

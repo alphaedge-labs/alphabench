@@ -11,7 +11,10 @@ const navigateToApp = () => {
 <template>
 	<div class="home">
 		<div class="hero">
-			<h1>alphabench</h1>
+			<h1>
+				alphabench
+				<span class="beta-label">ALPHA</span>
+			</h1>
 			<p class="subtitle">
 				Test your trading strategies in natural language
 			</p>
@@ -57,6 +60,10 @@ h1 {
 	background: linear-gradient(45deg, #111111, #535bf2);
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
 }
 
 .subtitle {
@@ -122,5 +129,17 @@ button {
 .separator {
 	margin: 0 0.5rem;
 	color: #666;
+}
+
+.beta-label {
+	font-size: 0.9rem;
+	background: linear-gradient(45deg, #111111, #535bf2);
+	padding: 0.2rem 0.5rem;
+	border-radius: 4px;
+	color: white;
+	-webkit-text-fill-color: white;
+	font-weight: 500;
+	letter-spacing: 0.05em;
+	vertical-align: super;
 }
 </style>

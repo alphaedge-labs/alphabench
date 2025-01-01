@@ -15,44 +15,6 @@
 
 				<form @submit.prevent="handleSubmit" class="form">
 					<div class="form-group">
-						<label>What asset class are you aiming for?</label>
-						<div class="radio-group">
-							<div class="radio-item">
-								<input
-									type="radio"
-									id="equity"
-									value="equity"
-									v-model="formData.assetClass"
-								/>
-								<label for="equity">Equity</label>
-							</div>
-							<div class="radio-item">
-								<input
-									type="radio"
-									id="fno"
-									value="fno"
-									v-model="formData.assetClass"
-								/>
-								<label for="fno">FnO</label>
-							</div>
-							<div class="radio-item">
-								<input
-									type="radio"
-									id="mutualFunds"
-									value="mutualFunds"
-									v-model="formData.assetClass"
-								/>
-								<label for="mutualFunds">Mutual Funds</label>
-							</div>
-						</div>
-					</div>
-
-					<div class="form-group">
-						<label>What is the date range you're aiming for?</label>
-						<DatePickerWithRange v-model="formData.dateRange" />
-					</div>
-
-					<div class="form-group">
 						<div class="label-with-info">
 							<label for="asset"
 								>What is the asset (or group of assets) you're
@@ -67,6 +29,11 @@
 							</button>
 						</div>
 						<AssetSearch v-model="formData.asset" />
+					</div>
+
+					<div class="form-group">
+						<label>What is the date range you're aiming for?</label>
+						<DatePickerWithRange v-model="formData.dateRange" />
 					</div>
 
 					<div class="form-group">
@@ -169,8 +136,10 @@ const showStrategyInfo = ref(false);
 const showUpgradeModal = ref(false);
 
 const formData = reactive({
-	assetClass: "equity",
-	dateRange: null,
+	dateRange: {
+		start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+		end: new Date(Date.now() - 24 * 60 * 60 * 1000), // yesterday
+	},
 	asset: null,
 	strategy: "",
 });
@@ -234,7 +203,6 @@ onMounted(() => {
 	const storedFormData = localStorage.getItem("editFormData");
 	if (storedFormData) {
 		const data = JSON.parse(storedFormData);
-		formData.assetClass = data.assetClass;
 		formData.dateRange = data.dateRange;
 		formData.asset = data.asset;
 		formData.strategy = data.strategy;
@@ -429,5 +397,14 @@ onMounted(() => {
 	.radio-item {
 		font-size: 0.9rem;
 	}
+}
+
+.radio-item label.disabled {
+	color: #9ca3af;
+	cursor: not-allowed;
+}
+
+.radio-item input[disabled] + label {
+	cursor: not-allowed;
 }
 </style>

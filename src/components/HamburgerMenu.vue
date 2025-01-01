@@ -1,6 +1,5 @@
-# Same script section as before
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useRouter } from "vue-router";
 
 const isDrawerOpen = ref(false);
@@ -36,14 +35,27 @@ onUnmounted(() => {
 	document.removeEventListener("click", handleClickOutside);
 });
 
+// const backtestHistory = {
+// 	thisWeek: [
+// 		{ id: 1, name: "BTC Strategy #1", date: "2024-03-20" },
+// 		{ id: 2, name: "ETH Trading Test", date: "2024-03-19" },
+// 	],
+// 	lastMonth: [{ id: 3, name: "DOGE Analysis", date: "2024-02-28" }],
+// 	older: [{ id: 4, name: "Long-term Strategy", date: "2024-01-15" }],
+// };
 const backtestHistory = {
-	thisWeek: [
-		{ id: 1, name: "BTC Strategy #1", date: "2024-03-20" },
-		{ id: 2, name: "ETH Trading Test", date: "2024-03-19" },
-	],
-	lastMonth: [{ id: 3, name: "DOGE Analysis", date: "2024-02-28" }],
-	older: [{ id: 4, name: "Long-term Strategy", date: "2024-01-15" }],
+	thisWeek: [],
+	lastMonth: [],
+	older: [],
 };
+
+const hasBacktestHistory = computed(() => {
+	return (
+		backtestHistory.thisWeek.length > 0 ||
+		backtestHistory.lastMonth.length > 0 ||
+		backtestHistory.older.length > 0
+	);
+});
 </script>
 
 <template>
@@ -88,43 +100,68 @@ const backtestHistory = {
 					</button>
 				</div>
 
-				<div class="history-section">
-					<h4>This Week</h4>
-					<div
-						v-for="item in backtestHistory.thisWeek"
-						:key="item.id"
-						class="history-item"
-						@click="navigateToResult(item.id)"
-					>
-						<span class="item-name">{{ item.name }}</span>
-						<span class="item-date">{{ item.date }}</span>
+				<div v-if="hasBacktestHistory" class="history-sections">
+					<div class="history-section">
+						<h4>This Week</h4>
+						<div
+							v-for="item in backtestHistory.thisWeek"
+							:key="item.id"
+							class="history-item"
+							@click="navigateToResult(item.id)"
+						>
+							<span class="item-name">{{ item.name }}</span>
+							<span class="item-date">{{ item.date }}</span>
+						</div>
+					</div>
+
+					<div class="history-section">
+						<h4>Last Month</h4>
+						<div
+							v-for="item in backtestHistory.lastMonth"
+							:key="item.id"
+							class="history-item"
+							@click="navigateToResult(item.id)"
+						>
+							<span class="item-name">{{ item.name }}</span>
+							<span class="item-date">{{ item.date }}</span>
+						</div>
+					</div>
+
+					<div class="history-section">
+						<h4>Long Time Ago</h4>
+						<div
+							v-for="item in backtestHistory.older"
+							:key="item.id"
+							class="history-item"
+							@click="navigateToResult(item.id)"
+						>
+							<span class="item-name">{{ item.name }}</span>
+							<span class="item-date">{{ item.date }}</span>
+						</div>
 					</div>
 				</div>
 
-				<div class="history-section">
-					<h4>Last Month</h4>
-					<div
-						v-for="item in backtestHistory.lastMonth"
-						:key="item.id"
-						class="history-item"
-						@click="navigateToResult(item.id)"
+				<div v-else class="empty-state">
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						width="48"
+						height="48"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.5"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="empty-icon"
 					>
-						<span class="item-name">{{ item.name }}</span>
-						<span class="item-date">{{ item.date }}</span>
-					</div>
-				</div>
-
-				<div class="history-section">
-					<h4>Long Time Ago</h4>
-					<div
-						v-for="item in backtestHistory.older"
-						:key="item.id"
-						class="history-item"
-						@click="navigateToResult(item.id)"
-					>
-						<span class="item-name">{{ item.name }}</span>
-						<span class="item-date">{{ item.date }}</span>
-					</div>
+						<path d="M21 8v13H3V8" />
+						<path d="M1 3h22v5H1z" />
+						<path d="M10 12h4" />
+					</svg>
+					<p>No backtest history yet</p>
+					<p class="empty-subtitle">
+						Run your first backtest to see it here
+					</p>
 				</div>
 			</div>
 		</div>
@@ -320,5 +357,36 @@ const backtestHistory = {
 	.history-item {
 		padding: 0.6rem 0.75rem;
 	}
+}
+
+.history-sections {
+	height: 100%;
+}
+
+.empty-state {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 4rem 2rem;
+	text-align: center;
+	color: #666;
+}
+
+.empty-icon {
+	margin-bottom: 1rem;
+	color: #ccc;
+}
+
+.empty-state p {
+	margin: 0;
+	font-size: 1rem;
+	font-weight: 500;
+}
+
+.empty-state .empty-subtitle {
+	margin-top: 0.5rem;
+	font-size: 0.875rem;
+	color: #999;
 }
 </style>

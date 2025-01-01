@@ -17,14 +17,22 @@
 					class="asset-card"
 				>
 					<h4>{{ category.title }}</h4>
-					<ul class="asset-list">
-						<li v-for="(item, idx) in category.examples" :key="idx">
-							{{ item }}
-						</li>
-					</ul>
-					<div class="note" v-if="category.note">
-						<strong>Note:</strong> {{ category.note }}
+					<div v-if="category.comingSoon" class="coming-soon">
+						Coming soon...
 					</div>
+					<template v-else>
+						<ul class="asset-list">
+							<li
+								v-for="(item, idx) in category.examples"
+								:key="idx"
+							>
+								{{ item }}
+							</li>
+						</ul>
+						<div class="note" v-if="category.note">
+							<strong>Note:</strong> {{ category.note }}
+						</div>
+					</template>
 				</div>
 			</div>
 		</div>
@@ -51,25 +59,30 @@ const assetCategories = [
 	},
 	{
 		title: "Stock Indices",
+		comingSoon: true,
 		examples: ["NIFTY 50", "NIFTY BANK", "NIFTY IT", "SENSEX"],
 	},
 	{
 		title: "Asset Groups",
+		comingSoon: true,
 		examples: [
 			"NIFTY50 Stocks",
 			"Bank Nifty Constituents",
 			"IT Sector Stocks",
 			"Top 10 Market Cap Companies",
+			"Coming soon...",
 		],
 		note: "Testing on groups will run the strategy on all constituent stocks",
 	},
 	{
 		title: "ETFs",
+		comingSoon: true,
 		examples: [
 			"NIFTYBEES - Nifty 50 ETF",
 			"BANKBEES - Bank Nifty ETF",
 			"GOLDBEES - Gold ETF",
 			"LIQUIDBEES - Liquid ETF",
+			"Coming soon...",
 		],
 	},
 ];
@@ -157,5 +170,11 @@ const assetCategories = [
 .description {
 	color: #666;
 	margin-bottom: 1.5rem;
+}
+
+.coming-soon {
+	color: #94a3b8;
+	font-style: italic;
+	margin: 0.5rem 0;
 }
 </style>

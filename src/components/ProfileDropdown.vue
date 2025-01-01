@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { useRoute } from "vue-router";
 
 import pencilIcon from "../assets/write-pencil.svg";
+import userIconDefault from "../assets/user_default.jpg";
 import UpgradeModal from "./UpgradeModal.vue";
 
 const route = useRoute();
@@ -33,8 +34,8 @@ const handleLogout = () => {
 		</router-link>
 
 		<div class="profile-dropdown">
-			<button class="profile-icon" @click="isOpen = !isOpen">
-				<img src="https://github.com/mdo.png" alt="Profile" />
+			<button class="profile-icon" @click="isOpen = !isOpen" disabled>
+				<img :src="userIconDefault" alt="Profile" />
 			</button>
 
 			<div v-if="isOpen" class="dropdown-menu">
