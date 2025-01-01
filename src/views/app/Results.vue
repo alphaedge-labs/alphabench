@@ -38,7 +38,6 @@ const fetchResult = async (id) => {
 
 		// Mock form details - replace with actual API call in production
 		formDetails.value = {
-			assetClass: "equity",
 			dateRange: {
 				start: "2024-01-01",
 				end: "2024-03-20",
@@ -119,10 +118,6 @@ onMounted(() => {
 			</div>
 			<div class="summary-content">
 				<div class="summary-item">
-					<span class="label">Asset Class:</span>
-					<span class="value">{{ formDetails.assetClass }}</span>
-				</div>
-				<div class="summary-item">
 					<span class="label">Asset:</span>
 					<span class="value">{{ formDetails.asset }}</span>
 				</div>
@@ -166,9 +161,11 @@ onMounted(() => {
 	width: 80%;
 	margin: 0 auto;
 	padding: 2rem;
+	max-width: 1000px;
 }
 
 .results-card {
+	width: 100%;
 	background: white;
 	border-radius: 0.5rem;
 	padding: 2rem;
@@ -268,10 +265,12 @@ onMounted(() => {
 }
 
 .summary-card {
+	width: 100%;
 	background: white;
 	border-radius: 0.5rem;
 	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 	padding: 1.5rem;
+	margin-top: 2rem;
 	margin-bottom: 2rem;
 }
 
@@ -396,7 +395,7 @@ onMounted(() => {
 @media (max-width: 768px) {
 	.results-container {
 		padding: 1rem;
-		padding-top: 5rem;
+		padding-top: 2.5rem;
 		width: 90%;
 	}
 

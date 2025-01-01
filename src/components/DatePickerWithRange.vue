@@ -11,6 +11,7 @@
 			class="date-picker"
 			:attributes="attributes"
 			@input="handleDateChange"
+			disabled
 		>
 			<template #default="{ inputValue, inputEvents }">
 				<div class="date-input">
@@ -19,8 +20,9 @@
 							inputValue.end || 'End date'
 						}`"
 						v-on="{ ...inputEvents.start, ...inputEvents.end }"
+						disabled
 						placeholder="Select date range"
-						class="date-field single-field"
+						class="date-field single-field disabled"
 					/>
 				</div>
 			</template>
@@ -144,14 +146,25 @@ watch(
 	box-shadow: 0 0 0 1px #535bf2;
 }
 
+.date-field.disabled {
+	background-color: #f3f4f6;
+	cursor: not-allowed;
+	opacity: 0.75;
+}
+
 .date-separator {
 	color: #64748b;
 	font-size: 0.875rem;
 }
 
-:deep(.vc-container) {
+/* :deep(.vc-container) {
 	border: 1px solid #e2e8f0;
 	border-radius: 0.5rem;
+} */
+
+:deep(.vc-container) {
+	pointer-events: none;
+	opacity: 0.75;
 }
 
 /* Override v-calendar default styles */
@@ -165,7 +178,7 @@ watch(
 }
 
 .single-field {
-	max-width: 220px;
+	max-width: 230px;
 	text-align: left;
 }
 
