@@ -3,6 +3,8 @@ import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { marked } from "marked";
 
+import { getBacktest, getReport } from "../../http/app";
+
 import ProfileDropdown from "../../components/ProfileDropdown.vue";
 import HamburgerMenu from "../../components/HamburgerMenu.vue";
 
@@ -14,40 +16,30 @@ const error = ref(null);
 const formDetails = ref(null);
 const shareableLink = ref("");
 const showShareLink = ref(false);
+const backtest = ref(null);
+const report = ref(null);
 
-const fetchResult = async (id) => {
+const fetchResults = async () => {
 	try {
-		// Use mock data in development
-		const response = await fetch(
-			import.meta.env.DEV
-				? `/mock/results/${id}.txt`
-				: `/api/v1/results/${id}`
-		);
+		const backtestId = route.params.id;
+		const [backtestData, reportData] = await Promise.all([
+			getBacktest(backtestId),
+			getReport(backtestId),
+		]);
 
-		if (!response.ok) {
-			if (response.status === 404) {
-				router.push("/404");
-				return;
-			}
-			throw new Error("Failed to fetch results");
+		backtest.value = backtestData;
+		report.value = reportData;
+
+		// If backtest is still pending, poll for updates
+		if (backtestData.status === "pending") {
+			setTimeout(fetchResults, 5000);
 		}
-
-		// For text files, use text() instead of json()
-		const content = await response.text();
-		resultContent.value = marked(content);
-
-		// Mock form details - replace with actual API call in production
-		formDetails.value = {
-			dateRange: {
-				start: "2024-01-01",
-				end: "2024-03-20",
-			},
-			asset: "NIFTY 50",
-			strategy:
-				"Mean reversion strategy focusing on identifying and trading when price deviates significantly from historical mean",
-		};
 	} catch (err) {
-		error.value = err.message;
+		if (err.response?.status === 404) {
+			router.push("/404");
+		} else {
+			error.value = "Failed to load results. Please try again.";
+		}
 	} finally {
 		isLoading.value = false;
 	}
@@ -75,9 +67,7 @@ const shareResult = async () => {
 	}
 };
 
-onMounted(() => {
-	fetchResult(route.params.id);
-});
+onMounted(fetchResults);
 </script>
 
 <template>

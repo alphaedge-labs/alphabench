@@ -13,7 +13,7 @@ const navigateToApp = () => {
 		<div class="hero">
 			<h1>
 				alphabench
-				<span class="beta-label">ALPHA</span>
+				<span class="beta-label">v0.1.0</span>
 			</h1>
 			<p class="subtitle">
 				Test your trading strategies in natural language

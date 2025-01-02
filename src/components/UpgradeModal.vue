@@ -25,15 +25,18 @@
 				>
 					<div
 						v-for="(plan, index) in plans"
-						:key="plan.name"
+						:key="plan.id"
 						class="plan-card"
 					>
 						<h3>{{ plan.name }}</h3>
-						<p class="plan-price">{{ plan.price }}</p>
-						<p class="plan-description">{{ plan.description }}</p>
+						<p class="price">${{ plan.price_usd }}/month</p>
+						<p class="description">{{ plan.description }}</p>
+						<p class="feature">
+							{{ plan.reports_per_day }} reports/day
+						</p>
+
 						<button
 							class="upgrade-button"
-							:class="{ primary: index === 1 }"
 							@click="handleSubscribe(plan.id)"
 							:disabled="isLoading"
 						>
@@ -64,14 +67,27 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { getPlans, createSubscription } from "../http/app";
 
 const props = defineProps({
 	show: Boolean,
 });
 
 const emit = defineEmits(["close"]);
+const plans = ref([]);
+const isLoading = ref(false);
+const error = ref(null);
+
+onMounted(async () => {
+	try {
+		const plansData = await getPlans();
+		plans.value = plansData;
+	} catch (err) {
+		error.value = "Failed to load subscription plans";
+	}
+});
 
 const handleClose = () => {
 	currentSlide.value = 0;
@@ -80,60 +96,30 @@ const handleClose = () => {
 
 const router = useRouter();
 const currentSlide = ref(0);
-const isLoading = ref(false);
-
-const plans = [
-	{
-		id: "free",
-		name: "Free",
-		price: "$0",
-		description: "For beginners, hobbyists, and casual investors",
-		cta: "Current Plan",
-	},
-	{
-		id: "pro",
-		name: "Pro",
-		price: "$20",
-		description: "For intermediate traders, analysts, and small teams",
-		cta: "Upgrade to Pro",
-	},
-	{
-		id: "plus",
-		name: "Plus",
-		price: "$40",
-		description:
-			"For professional traders, quantitative researchers, and small funds",
-		cta: "Upgrade to Plus",
-	},
-];
 
 const handleSubscribe = async (planId) => {
-	if (planId === "free") return;
-
 	isLoading.value = true;
+	error.value = null;
+
 	try {
-		const response = await fetch(`/api/v1/subscribe/${planId}`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-		});
+		// Here you would typically integrate with a payment provider
+		// to get a payment token before creating the subscription
+		const paymentToken = await handlePayment(planId);
 
-		if (!response.ok) {
-			throw new Error("Failed to initiate subscription");
-		}
-
-		const data = await response.json();
-		// Redirect to payment page or handle subscription flow
-		if (data.redirectUrl) {
-			window.location.href = data.redirectUrl;
-		}
-	} catch (error) {
-		console.error("Subscription error:", error);
-		// Handle error (show notification, etc.)
+		await createSubscription(planId, paymentToken);
+		emit("close");
+		// You might want to refresh the user's subscription status here
+	} catch (err) {
+		error.value = "Failed to process subscription";
 	} finally {
 		isLoading.value = false;
 	}
+};
+
+const handlePayment = async (planId) => {
+	// Implement payment processing logic here
+	// This would typically involve a payment provider's SDK
+	throw new Error("Payment processing not implemented");
 };
 
 const nextSlide = () => {

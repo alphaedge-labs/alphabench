@@ -153,38 +153,30 @@ const handleSubmit = async () => {
 	notification.value = null;
 
 	try {
-		// Simulate API delay
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		const result = await createBacktest({
+			asset: formData.asset,
+			dateRange: {
+				start: formData.dateRange.start.toISOString().split("T")[0],
+				end: formData.dateRange.end.toISOString().split("T")[0],
+			},
+			strategy: formData.strategy,
+		});
 
-		switch (mockScenario.value) {
-			case "error":
-				throw new Error("Mock API Error");
-			case "upgrade":
-				showUpgradeModal.value = true;
-				return;
-			default:
-				// Success flow
-				uuid.value = Math.random().toString(36).substring(2, 15);
-
-				for (let i = 0; i <= 100; i += 10) {
-					progress.value = i;
-					await new Promise((resolve) => setTimeout(resolve, 800));
-				}
-
-				notification.value = {
-					type: "success",
-					message:
-						"Backtesting Complete. Your report is ready to view.",
-				};
-
-				router.push(`/results/${uuid.value}`);
-		}
+		// Redirect to results page with the backtest ID
+		router.push(`/results/${result.id}`);
 	} catch (error) {
-		console.error("Error in handleSubmit:", error);
-		notification.value = {
-			type: "error",
-			message: error.message || "An unknown error occurred",
-		};
+		if (error.response?.status === 429) {
+			notification.value = {
+				type: "error",
+				message:
+					"Daily backtest limit reached. Please upgrade your plan for more tests.",
+			};
+		} else {
+			notification.value = {
+				type: "error",
+				message: "Failed to create backtest. Please try again.",
+			};
+		}
 	} finally {
 		isLoading.value = false;
 	}
