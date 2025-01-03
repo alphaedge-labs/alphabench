@@ -83,33 +83,6 @@
 				:show="showUpgradeModal"
 				@close="showUpgradeModal = false"
 			/>
-
-			<div v-if="isDevelopment" style="margin-top: 1rem">
-				<button
-					@click="
-						mockScenario = 'success';
-						handleSubmit();
-					"
-				>
-					Test Success
-				</button>
-				<button
-					@click="
-						mockScenario = 'error';
-						handleSubmit();
-					"
-				>
-					Test Error
-				</button>
-				<button
-					@click="
-						mockScenario = 'upgrade';
-						handleSubmit();
-					"
-				>
-					Test Upgrade Modal
-				</button>
-			</div>
 		</div>
 	</Transition>
 </template>
@@ -126,6 +99,11 @@ import StrategyInfoModal from "./StrategyInfoModal.vue";
 import AssetInfoModal from "./AssetInfoModal.vue";
 import UpgradeModal from "./UpgradeModal.vue";
 
+import { createBacktest } from "../http/app";
+
+import { storeToRefs } from "pinia";
+import { useAppStore } from "../stores/app";
+
 const router = useRouter();
 const isLoading = ref(false);
 const progress = ref(0);
@@ -135,6 +113,9 @@ const showAssetInfo = ref(false);
 const showStrategyInfo = ref(false);
 const showUpgradeModal = ref(false);
 
+const appStore = useAppStore();
+const { pushToBacktestHistory } = appStore;
+
 const formData = reactive({
 	dateRange: {
 		start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
@@ -143,10 +124,6 @@ const formData = reactive({
 	asset: null,
 	strategy: "",
 });
-
-const mockScenario = ref("success"); // 'success', 'error', 'upgrade'
-
-const isDevelopment = computed(() => import.meta.env.DEV);
 
 const handleSubmit = async () => {
 	isLoading.value = true;
@@ -162,10 +139,19 @@ const handleSubmit = async () => {
 			strategy: formData.strategy,
 		});
 
-		// Redirect to results page with the backtest ID
-		router.push(`/results/${result.id}`);
+		if (result.id) {
+			pushToBacktestHistory({
+				id: result.id,
+				name: result.strategy_title,
+				status: result.status,
+			});
+
+			// Redirect to results page with the backtest ID
+			router.push(`/results/${result.id}`);
+		}
 	} catch (error) {
 		if (error.response?.status === 429) {
+			showUpgradeModal.value = true;
 			notification.value = {
 				type: "error",
 				message:
@@ -174,7 +160,8 @@ const handleSubmit = async () => {
 		} else {
 			notification.value = {
 				type: "error",
-				message: "Failed to create backtest. Please try again.",
+				message:
+					"Failed to create backtest. We're monitoring your request...",
 			};
 		}
 	} finally {
@@ -211,7 +198,7 @@ onMounted(() => {
 	max-width: 48rem;
 	border-radius: 0.5rem;
 	margin: 0 auto;
-	padding: 0 1rem;
+	padding: 0;
 }
 
 .card-content {
@@ -349,16 +336,20 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
+	.card {
+		padding: 0;
+	}
+
 	.card-content {
-		padding: 1rem;
+		padding: 1rem 0;
 	}
 
 	.form {
 		gap: 1rem;
 	}
 
-	.radio-group {
-		gap: 0.75rem;
+	.form-group {
+		margin-bottom: 0.75rem;
 	}
 
 	.magical-textarea {
@@ -374,20 +365,49 @@ onMounted(() => {
 		border-radius: 0.375rem 0.375rem 0 0;
 		padding: 0.75rem;
 		text-align: center;
+		z-index: 50;
+	}
+
+	.form-group label,
+	.radio-item {
+		font-size: 0.95rem;
+	}
+
+	.submit-button {
+		padding: 0.875rem;
+		margin-top: 0.5rem;
+		font-size: 1rem;
 	}
 }
 
 @media (max-width: 480px) {
 	.card-header h2 {
 		font-size: 1.25rem;
+		padding: 0.75rem 0;
 	}
 
-	.form-group label {
-		font-size: 0.9rem;
-	}
-
+	.form-group label,
 	.radio-item {
 		font-size: 0.9rem;
+	}
+
+	.label-with-info {
+		flex-wrap: wrap;
+		gap: 0.25rem;
+	}
+
+	input,
+	select,
+	textarea {
+		font-size: 16px !important;
+		padding: 0.625rem;
+	}
+}
+
+@media (max-width: 640px) {
+	.date-picker-wrapper {
+		flex-direction: column;
+		gap: 0.5rem;
 	}
 }
 

@@ -40,7 +40,7 @@
 							@click="handleSubscribe(plan.id)"
 							:disabled="isLoading"
 						>
-							{{ isLoading ? "Processing..." : plan.cta }}
+							{{ isLoading ? "Processing..." : "Choose" }}
 						</button>
 					</div>
 				</div>

@@ -1,17 +1,17 @@
 import client from "./client";
 
 export const getLoginUrl = async () => {
-	const response = await client.get("/auth/login");
+	const response = await client.get("/v1/auth/login");
 	return response.data;
 };
 
 export const getLogoutUrl = async () => {
-	const response = await client.get("/auth/logout");
+	const response = await client.get("/v1/auth/logout");
 	return response.data;
 };
 
 export const googleLogin = async (code, redirectUri) => {
-	const response = await client.post("/auth/google", {
+	const response = await client.post("/v1/auth/google", {
 		code,
 		redirect_uri: redirectUri,
 	});
@@ -19,6 +19,6 @@ export const googleLogin = async (code, redirectUri) => {
 };
 
 export const getCurrentUser = async () => {
-	const response = await client.get("/auth/me");
+	const response = await client.get("/v1/auth/me");
 	return response.data;
 };
