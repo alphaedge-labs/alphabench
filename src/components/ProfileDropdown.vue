@@ -100,6 +100,10 @@ const handleLogout = () => {
 	display: flex;
 	align-items: center;
 	gap: 1.5rem;
+	position: fixed;
+	right: 2rem;
+	top: 1rem;
+	z-index: 1000;
 }
 
 .app-icon {

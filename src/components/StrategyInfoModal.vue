@@ -37,26 +37,27 @@ const props = defineProps({
 	show: Boolean,
 });
 
-defineEmits(["close"]);
+const emit = defineEmits(["close"]);
 
 const strategies = [
 	{
 		title: "Simple Moving Average Crossover",
-		text: "Buy when 20-day moving average crosses above 50-day moving average. Sell when 20-day moving average crosses below 50-day moving average. Use market orders at close.",
+		text: "Buy when 5-minute moving average crosses above 20-minute moving average, using closing prices. Sell when 5-minute MA crosses below 20-minute MA. Calculate MAs on closing prices only. Exit all positions at end of day",
 	},
 	{
-		title: "RSI Mean Reversion",
-		text: "Buy when RSI(14) goes below 30 and sell when it crosses above 70. Use limit orders with 1% price buffer from the closing price.",
+		title: "Volume Spike",
+		text: "Buy when 14-period RSI drops below 30 using 5-minute intervals and closing prices. Sell when RSI crosses above 70. Stop loss at 1% below entry price. Exit all positions at end of day",
 	},
 	{
-		title: "Breakout Strategy",
-		text: "Buy when price breaks above 20-day high with volume 50% above 20-day average volume. Sell when price falls below 10-day low. Use stop loss of 2%.",
+		title: "Double bottom pattern strategy",
+		text: "Buy when double bottom pattern forms (two lows within 0.1% of each other in 30-minute window). Sell when price moves 0.5% above the peak between the two lows. Stop loss at 0.2% below second low",
 	},
 ];
 
 const copyStrategy = async (text) => {
 	try {
 		await navigator.clipboard.writeText(text);
+		emit("close");
 		alert("Strategy copied to clipboard!");
 	} catch (err) {
 		console.error("Failed to copy text: ", err);

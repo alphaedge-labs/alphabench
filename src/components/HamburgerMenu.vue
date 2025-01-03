@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
+import { useAppStore } from "../stores/app";
 
 const isDrawerOpen = ref(false);
 const router = useRouter();
@@ -43,17 +45,15 @@ onUnmounted(() => {
 // 	lastMonth: [{ id: 3, name: "DOGE Analysis", date: "2024-02-28" }],
 // 	older: [{ id: 4, name: "Long-term Strategy", date: "2024-01-15" }],
 // };
-const backtestHistory = {
-	thisWeek: [],
-	lastMonth: [],
-	older: [],
-};
+
+const appStore = useAppStore();
+const { backtestHistory } = storeToRefs(appStore);
 
 const hasBacktestHistory = computed(() => {
 	return (
-		backtestHistory.thisWeek.length > 0 ||
-		backtestHistory.lastMonth.length > 0 ||
-		backtestHistory.older.length > 0
+		backtestHistory.value.thisWeek.length > 0 ||
+		backtestHistory.value.lastMonth.length > 0 ||
+		backtestHistory.value.older.length > 0
 	);
 });
 </script>

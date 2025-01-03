@@ -1,65 +1,38 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { storeToRefs } from "pinia";
+
 import ProfileDropdown from "../../components/ProfileDropdown.vue";
 import HamburgerMenu from "../../components/HamburgerMenu.vue";
 
-const user = ref({
-	name: "John Doe",
-	email: "john@example.com",
-	plan: "Pro Plan",
-	joinDate: "March 2024",
-	backtestsRun: 42,
-});
+import { getActiveSubscription, getBacktests } from "../../http/app";
+import { useAuthStore } from "../../stores/auth";
 
 const feedback = ref("");
 const feedbackStatus = ref("");
 
-const handleUnsubscribe = async () => {
+const authStore = useAuthStore();
+const { user } = storeToRefs(authStore);
+
+const subscription = ref(null);
+const backtests = ref([]);
+const isLoading = ref(true);
+
+onMounted(async () => {
 	try {
-		const response = await fetch("/api/v1/unsubscribe", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-		});
+		const [subData, backtestData] = await Promise.all([
+			getActiveSubscription(),
+			getBacktests(),
+		]);
 
-		if (!response.ok) {
-			throw new Error("Failed to unsubscribe");
-		}
-
-		// Update user plan status locally
-		user.value.plan = "Free Plan";
+		subscription.value = subData;
+		backtests.value = backtestData;
 	} catch (error) {
-		console.error("Unsubscribe error:", error);
+		console.error("Failed to load profile data:", error);
+	} finally {
+		isLoading.value = false;
 	}
-};
-
-const submitFeedback = async () => {
-	try {
-		const response = await fetch("/api/v1/feedback", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ feedback: feedback.value }),
-		});
-
-		if (!response.ok) {
-			throw new Error("Failed to submit feedback");
-		}
-
-		feedbackStatus.value = "Thank you for your feedback!";
-		feedback.value = "";
-
-		// Clear success message after 3 seconds
-		setTimeout(() => {
-			feedbackStatus.value = "";
-		}, 3000);
-	} catch (error) {
-		console.error("Feedback submission error:", error);
-		feedbackStatus.value = "Failed to submit feedback. Please try again.";
-	}
-};
+});
 </script>
 
 <template>
@@ -100,7 +73,7 @@ const submitFeedback = async () => {
 							}}</span>
 						</div>
 					</div>
-					<div
+					<!--<div
 						v-if="user.plan !== 'Free Plan'"
 						class="subscription-section"
 					>
@@ -110,7 +83,7 @@ const submitFeedback = async () => {
 						>
 							Unsubscribe from {{ user.plan }}
 						</button>
-					</div>
+					</div>-->
 				</div>
 			</div>
 		</div>

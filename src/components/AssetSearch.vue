@@ -70,7 +70,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from "vue";
-import assets from "../assets/instruments.json";
+import assets from "../assets/instruments-small.json";
 
 const props = defineProps({
 	modelValue: {
