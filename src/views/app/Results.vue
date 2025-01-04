@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { marked } from "marked";
 
@@ -24,6 +24,8 @@ const { backtest } = storeToRefs(appStore);
 
 const fetchResults = async () => {
 	try {
+		isLoading.value = true; // Ensure loading state is reset
+
 		const backtestId = route.params.id;
 		const backtestData = await getBacktestById(backtestId);
 
@@ -35,6 +37,7 @@ const fetchResults = async () => {
 			},
 			strategy: backtestData.strategy_description,
 		};
+		error.value = null;
 	} catch (err) {
 		if (err.response?.status === 404) {
 			router.push("/404");
@@ -66,6 +69,8 @@ const shareResult = async () => {
 		error.value = err.message;
 	}
 };
+
+watch(() => route.params.id, fetchResults);
 
 onMounted(fetchResults);
 </script>
