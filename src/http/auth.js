@@ -17,8 +17,3 @@ export const googleLogin = async (code, redirectUri) => {
 	});
 	return response.data;
 };
-
-export const getCurrentUser = async () => {
-	const response = await client.get("/v1/auth/me");
-	return response.data;
-};

@@ -297,7 +297,7 @@ const hasBacktestHistory = computed(() => {
 .history-section h4 {
 	color: #666;
 	margin: 0 0 1rem 0;
-	font-size: 0.875rem;
+	font-size: 0.8rem;
 	font-weight: 500;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
@@ -322,6 +322,8 @@ const hasBacktestHistory = computed(() => {
 }
 
 .item-name {
+	font-size: 0.75rem;
+	text-align: left;
 	font-weight: 500;
 	color: #333;
 }

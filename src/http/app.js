@@ -1,5 +1,10 @@
 import client from "./client";
 
+export const getCurrentUser = async () => {
+	const response = await client.get("/v1/users/me");
+	return response.data;
+};
+
 export const createBacktest = async (backtestData) => {
 	const response = await client.post("/v1/backtests", {
 		instrument_symbol: backtestData.asset,

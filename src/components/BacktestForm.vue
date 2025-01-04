@@ -150,6 +150,7 @@ const handleSubmit = async () => {
 			router.push(`/results/${result.id}`);
 		}
 	} catch (error) {
+		console.log("error", error);
 		if (error.response?.status === 429) {
 			showUpgradeModal.value = true;
 			notification.value = {

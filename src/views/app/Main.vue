@@ -1,4 +1,6 @@
 <script setup>
+import { onMounted } from "vue";
+
 import BacktestForm from "../../components/BacktestForm.vue";
 import ProfileDropdown from "../../components/ProfileDropdown.vue";
 import HamburgerMenu from "../../components/HamburgerMenu.vue";
@@ -19,7 +21,6 @@ import HamburgerMenu from "../../components/HamburgerMenu.vue";
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 2rem;
 	width: 100%;
 }
 

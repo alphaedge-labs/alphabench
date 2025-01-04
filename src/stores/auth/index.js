@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import initialState from "./initialState";
-import { googleLogin, getCurrentUser } from "../../http/auth";
+import { googleLogin } from "../../http/auth";
+import { getCurrentUser } from "../../http/app";
 
 export const useAuthStore = defineStore("auth", {
 	state: () => initialState,
@@ -16,7 +17,9 @@ export const useAuthStore = defineStore("auth", {
 			await this.fetchUser();
 		},
 		async fetchUser() {
-			this.user = await getCurrentUser();
+			const data = await getCurrentUser();
+			this.user = data;
+			return data;
 		},
 		logout() {
 			this.token = null;
