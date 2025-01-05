@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { marked } from "marked";
 
@@ -15,42 +15,37 @@ const formDetails = ref(null);
 const shareableLink = ref("");
 const showShareLink = ref(false);
 
-const fetchResult = async (id) => {
+import { storeToRefs } from "pinia";
+import { useAppStore } from "../../stores/app";
+
+const appStore = useAppStore();
+const { getBacktestById } = appStore;
+const { backtest } = storeToRefs(appStore);
+
+const fetchResults = async () => {
 	try {
-		// Use mock data in development
-		const response = await fetch(
-			import.meta.env.DEV
-				? `/mock/results/${id}.txt`
-				: `/api/v1/results/${id}`
-		);
+		isLoading.value = true; // Ensure loading state is reset
 
-		if (!response.ok) {
-			if (response.status === 404) {
-				router.push("/404");
-				return;
-			}
-			throw new Error("Failed to fetch results");
-		}
+		const backtestId = route.params.id;
+		const backtestData = await getBacktestById(backtestId);
 
-		// For text files, use text() instead of json()
-		const content = await response.text();
-		resultContent.value = marked(content);
-
-		// Mock form details - replace with actual API call in production
 		formDetails.value = {
+			asset: backtestData.instrument_symbol,
 			dateRange: {
-				start: "2024-01-01",
-				end: "2024-03-20",
+				start: backtestData.from_date,
+				end: backtestData.to_date,
 			},
-			asset: "NIFTY 50",
-			strategy:
-				"Mean reversion strategy focusing on identifying and trading when price deviates significantly from historical mean",
+			strategy: backtestData.strategy_description,
 		};
+		error.value = null;
 	} catch (err) {
-		error.value = err.message;
-	} finally {
-		isLoading.value = false;
+		if (err.response?.status === 404) {
+			router.push("/404");
+		} else {
+			error.value = "Failed to load results. Please try again.";
+		}
 	}
+	isLoading.value = false;
 };
 
 const editStrategy = () => {
@@ -75,9 +70,9 @@ const shareResult = async () => {
 	}
 };
 
-onMounted(() => {
-	fetchResult(route.params.id);
-});
+watch(() => route.params.id, fetchResults);
+
+onMounted(fetchResults);
 </script>
 
 <template>
@@ -87,7 +82,7 @@ onMounted(() => {
 		</div>
 		<HamburgerMenu />
 		<!-- Form Details Summary Card -->
-		<div v-if="formDetails && !isLoading && !error" class="summary-card">
+		<div v-if="formDetails && !error" class="summary-card">
 			<div class="summary-header">
 				<div class="title-share-wrapper">
 					<h3>Strategy Details</h3>
@@ -137,13 +132,66 @@ onMounted(() => {
 			</div>
 		</div>
 
-		<!-- Results Card -->
-		<div class="results-card">
-			<div v-if="isLoading" class="loading-state">Loading results...</div>
-
-			<div v-else-if="error" class="error-state">
-				{{ error }}
+		<!-- Loading timeline -->
+		<div
+			v-if="backtest && !backtest.generated_report"
+			class="loading-timeline"
+		>
+			<div v-if="backtest.status === 'failed'" class="failed-timeline">
+				Backtesting failed...<br />We're monitoring your request
 			</div>
+
+			<div v-else class="timeline">
+				<div
+					class="timeline-item"
+					:class="{
+						active:
+							backtest.status === 'pending' ||
+							backtest.status === 'generating_script' ||
+							backtest.status === 'ready_for_validation',
+						'pulse-dot':
+							backtest.status === 'pending' ||
+							backtest.status === 'generating_script',
+					}"
+				>
+					<div class="timeline-dot"></div>
+					<div class="timeline-content">
+						<h4>Backtesting</h4>
+						<p>Running your strategy against historical data</p>
+					</div>
+				</div>
+				<div
+					class="timeline-item"
+					:class="{
+						active: backtest.status === 'ready_for_validation',
+						'pulse-dot': backtest.status === 'ready_for_validation',
+					}"
+				>
+					<div class="timeline-dot"></div>
+					<div class="timeline-content">
+						<h4>Validation</h4>
+						<p>Validating strategy performance</p>
+					</div>
+				</div>
+				<div
+					class="timeline-item"
+					:class="{
+						active: backtest.ready_for_report,
+						'pulse-dot': backtest.ready_for_report,
+					}"
+				>
+					<div class="timeline-dot"></div>
+					<div class="timeline-content">
+						<h4>Report Generation</h4>
+						<p>Creating detailed analysis report</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Results Card -->
+		<div v-else class="results-card">
+			<div v-if="isLoading" class="loading-state">Loading results...</div>
 
 			<div v-else class="markdown-content" v-html="resultContent"></div>
 		</div>
@@ -160,7 +208,7 @@ onMounted(() => {
 .results-container {
 	width: 80%;
 	margin: 0 auto;
-	padding: 2rem;
+	padding: 0 2rem;
 	max-width: 1000px;
 }
 
@@ -265,7 +313,6 @@ onMounted(() => {
 }
 
 .summary-card {
-	width: 100%;
 	background: white;
 	border-radius: 0.5rem;
 	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -392,6 +439,108 @@ onMounted(() => {
 	white-space: nowrap;
 }
 
+.loading-timeline {
+	width: 100%;
+	background: white;
+	border-radius: 0.5rem;
+	padding: 2rem 0;
+	min-height: 400px;
+}
+
+.failed-timeline {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 400px;
+	text-align: left;
+}
+
+.timeline {
+	position: relative;
+	max-width: 450px;
+	margin: 0 auto;
+	padding: 2rem 0;
+}
+
+.timeline::before {
+	content: "";
+	position: absolute;
+	left: 17px;
+	top: 0;
+	bottom: 0;
+	width: 2px;
+	background: #e5e7eb;
+}
+
+.timeline-item {
+	position: relative;
+	margin-bottom: 2rem;
+	padding-left: 45px;
+	opacity: 0.5;
+	transition: opacity 0.3s ease;
+	display: flex;
+	align-items: center;
+}
+
+.timeline-item.active {
+	opacity: 1;
+}
+
+.timeline-dot {
+	position: absolute;
+	left: 11px;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: #e5e7eb;
+	border: 2px solid white;
+}
+
+.timeline-item.active .timeline-dot {
+	background: #535bf2;
+	box-shadow: 0 0 0 4px rgba(83, 91, 242, 0.2);
+}
+
+.timeline-content {
+	background: #f9fafb;
+	border-radius: 0.5rem;
+	padding: 1rem;
+	border: 1px solid #e5e7eb;
+	width: 320px;
+}
+
+.timeline-content h4 {
+	margin: 0 0 0.5rem 0;
+	font-size: 1rem;
+	font-weight: 600;
+	background: linear-gradient(45deg, #111111, #535bf2);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+
+.timeline-content p {
+	margin: 0;
+	font-size: 0.875rem;
+	color: #6b7280;
+}
+
+@keyframes pulse {
+	0% {
+		box-shadow: 0 0 0 0 rgba(83, 91, 242, 0.4);
+	}
+	70% {
+		box-shadow: 0 0 0 10px rgba(83, 91, 242, 0);
+	}
+	100% {
+		box-shadow: 0 0 0 0 rgba(83, 91, 242, 0);
+	}
+}
+
+.pulse-dot .timeline-dot {
+	animation: pulse 1s infinite;
+}
+
 @media (max-width: 768px) {
 	.results-container {
 		padding: 1rem;
@@ -453,6 +602,19 @@ onMounted(() => {
 	.share-link-input,
 	.copy-button {
 		width: 100%;
+	}
+
+	.loading-timeline {
+		padding: 1rem;
+	}
+
+	.timeline {
+		padding: 1rem 0;
+	}
+}
+@media (max-width: 480px) {
+	.loading-timeline {
+		width: 360px;
 	}
 }
 </style>

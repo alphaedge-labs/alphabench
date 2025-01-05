@@ -1,0 +1,14 @@
+[
+	{ "value": "CIPLA", "label": "Cipla (CIPLA)" },
+	{ "value": "GRASIM", "label": "Grasim Industries (GRASIM)" },
+	{ "value": "ITC", "label": "ITC (ITC)" },
+	{ "value": "MARUTI", "label": "Maruti Suzuki (MARUTI)" },
+	{ "value": "NTPC", "label": "NTPC (NTPC)" },
+	{ "value": "ONGC", "label": "Oil and Natural Gas Corporation (ONGC)" },
+	{ "value": "TCS", "label": "Tata Consultancy Services (TCS)" },
+	{ "value": "TRENT", "label": "Trent (TRENT)" },
+	{ "value": "WIPRO", "label": "Wipro (WIPRO)" },
+	{ "value": "ITI", "label": "ITI Limited (ITI)" },
+	{ "value": "JIOFIN", "label": "Jio Financial Services (JIOFIN)" },
+	{ "value": "NHPC", "label": "NHPC Limited (NHPC)" }
+]

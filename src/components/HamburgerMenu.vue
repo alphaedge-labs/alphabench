@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
+import { useAppStore } from "../stores/app";
 
 const isDrawerOpen = ref(false);
 const router = useRouter();
@@ -43,17 +45,15 @@ onUnmounted(() => {
 // 	lastMonth: [{ id: 3, name: "DOGE Analysis", date: "2024-02-28" }],
 // 	older: [{ id: 4, name: "Long-term Strategy", date: "2024-01-15" }],
 // };
-const backtestHistory = {
-	thisWeek: [],
-	lastMonth: [],
-	older: [],
-};
+
+const appStore = useAppStore();
+const { backtestHistory } = storeToRefs(appStore);
 
 const hasBacktestHistory = computed(() => {
 	return (
-		backtestHistory.thisWeek.length > 0 ||
-		backtestHistory.lastMonth.length > 0 ||
-		backtestHistory.older.length > 0
+		backtestHistory.value.thisWeek.length > 0 ||
+		backtestHistory.value.lastMonth.length > 0 ||
+		backtestHistory.value.older.length > 0
 	);
 });
 </script>
@@ -297,7 +297,7 @@ const hasBacktestHistory = computed(() => {
 .history-section h4 {
 	color: #666;
 	margin: 0 0 1rem 0;
-	font-size: 0.875rem;
+	font-size: 0.8rem;
 	font-weight: 500;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
@@ -322,6 +322,8 @@ const hasBacktestHistory = computed(() => {
 }
 
 .item-name {
+	font-size: 0.75rem;
+	text-align: left;
 	font-weight: 500;
 	color: #333;
 }

@@ -1,3 +1,9 @@
 export default {
-	pastResults: [],
+	wsConnected: false,
+	backtestHistory: {
+		thisWeek: [],
+		lastMonth: [],
+		older: [],
+	},
+	backtest: null,
 };

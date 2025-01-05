@@ -83,33 +83,6 @@
 				:show="showUpgradeModal"
 				@close="showUpgradeModal = false"
 			/>
-
-			<div v-if="isDevelopment" style="margin-top: 1rem">
-				<button
-					@click="
-						mockScenario = 'success';
-						handleSubmit();
-					"
-				>
-					Test Success
-				</button>
-				<button
-					@click="
-						mockScenario = 'error';
-						handleSubmit();
-					"
-				>
-					Test Error
-				</button>
-				<button
-					@click="
-						mockScenario = 'upgrade';
-						handleSubmit();
-					"
-				>
-					Test Upgrade Modal
-				</button>
-			</div>
 		</div>
 	</Transition>
 </template>
@@ -126,6 +99,11 @@ import StrategyInfoModal from "./StrategyInfoModal.vue";
 import AssetInfoModal from "./AssetInfoModal.vue";
 import UpgradeModal from "./UpgradeModal.vue";
 
+import { createBacktest } from "../http/app";
+
+import { storeToRefs } from "pinia";
+import { useAppStore } from "../stores/app";
+
 const router = useRouter();
 const isLoading = ref(false);
 const progress = ref(0);
@@ -134,6 +112,9 @@ const notification = ref(null);
 const showAssetInfo = ref(false);
 const showStrategyInfo = ref(false);
 const showUpgradeModal = ref(false);
+
+const appStore = useAppStore();
+const { pushToBacktestHistory } = appStore;
 
 const formData = reactive({
 	dateRange: {
@@ -144,47 +125,46 @@ const formData = reactive({
 	strategy: "",
 });
 
-const mockScenario = ref("success"); // 'success', 'error', 'upgrade'
-
-const isDevelopment = computed(() => import.meta.env.DEV);
-
 const handleSubmit = async () => {
 	isLoading.value = true;
 	notification.value = null;
 
 	try {
-		// Simulate API delay
-		await new Promise((resolve) => setTimeout(resolve, 1000));
+		const result = await createBacktest({
+			asset: formData.asset,
+			dateRange: {
+				start: formData.dateRange.start.toISOString().split("T")[0],
+				end: formData.dateRange.end.toISOString().split("T")[0],
+			},
+			strategy: formData.strategy,
+		});
 
-		switch (mockScenario.value) {
-			case "error":
-				throw new Error("Mock API Error");
-			case "upgrade":
-				showUpgradeModal.value = true;
-				return;
-			default:
-				// Success flow
-				uuid.value = Math.random().toString(36).substring(2, 15);
+		if (result.id) {
+			pushToBacktestHistory({
+				id: result.id,
+				name: result.strategy_title,
+				status: result.status,
+			});
 
-				for (let i = 0; i <= 100; i += 10) {
-					progress.value = i;
-					await new Promise((resolve) => setTimeout(resolve, 800));
-				}
-
-				notification.value = {
-					type: "success",
-					message:
-						"Backtesting Complete. Your report is ready to view.",
-				};
-
-				router.push(`/results/${uuid.value}`);
+			// Redirect to results page with the backtest ID
+			router.push(`/results/${result.id}`);
 		}
 	} catch (error) {
-		console.error("Error in handleSubmit:", error);
-		notification.value = {
-			type: "error",
-			message: error.message || "An unknown error occurred",
-		};
+		console.log("error", error);
+		if (error.response?.status === 429) {
+			showUpgradeModal.value = true;
+			notification.value = {
+				type: "error",
+				message:
+					"Daily backtest limit reached. Please upgrade your plan for more tests.",
+			};
+		} else {
+			notification.value = {
+				type: "error",
+				message:
+					"Failed to create backtest. We're monitoring your request...",
+			};
+		}
 	} finally {
 		isLoading.value = false;
 	}
@@ -219,7 +199,7 @@ onMounted(() => {
 	max-width: 48rem;
 	border-radius: 0.5rem;
 	margin: 0 auto;
-	padding: 0 1rem;
+	padding: 0;
 }
 
 .card-content {
@@ -357,16 +337,20 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
+	.card {
+		padding: 0;
+	}
+
 	.card-content {
-		padding: 1rem;
+		padding: 1rem 0;
 	}
 
 	.form {
 		gap: 1rem;
 	}
 
-	.radio-group {
-		gap: 0.75rem;
+	.form-group {
+		margin-bottom: 0.75rem;
 	}
 
 	.magical-textarea {
@@ -382,20 +366,49 @@ onMounted(() => {
 		border-radius: 0.375rem 0.375rem 0 0;
 		padding: 0.75rem;
 		text-align: center;
+		z-index: 50;
+	}
+
+	.form-group label,
+	.radio-item {
+		font-size: 0.95rem;
+	}
+
+	.submit-button {
+		padding: 0.875rem;
+		margin-top: 0.5rem;
+		font-size: 1rem;
 	}
 }
 
 @media (max-width: 480px) {
 	.card-header h2 {
 		font-size: 1.25rem;
+		padding: 0.75rem 0;
 	}
 
-	.form-group label {
-		font-size: 0.9rem;
-	}
-
+	.form-group label,
 	.radio-item {
 		font-size: 0.9rem;
+	}
+
+	.label-with-info {
+		flex-wrap: wrap;
+		gap: 0.25rem;
+	}
+
+	input,
+	select,
+	textarea {
+		font-size: 16px !important;
+		padding: 0.625rem;
+	}
+}
+
+@media (max-width: 640px) {
+	.date-picker-wrapper {
+		flex-direction: column;
+		gap: 0.5rem;
 	}
 }
 

@@ -158,35 +158,6 @@ const plans = [
 		],
 		cta: "Upgrade to Pro",
 	},
-	{
-		name: "Plus",
-		price: "$40",
-		description:
-			"For professional traders, quantitative researchers, and small funds",
-		features: [
-			"Saved strategy templates for quick re-use",
-			"Custom basket backtesting",
-			"Up to 5+ years of historical data",
-			"Full interval granularity (1-second to 1-day)",
-			"Highest daily request limits",
-			"Bulk selection from watchlists",
-			"Custom asset groupings",
-			"User-defined ticker sets",
-			"Complex, algorithmic strategies",
-			"Dynamic position sizing, advanced volatility models",
-			"Rolling Sharpe, Monte Carlo simulations",
-			"White-labeled, fully customizable reports",
-			"Version-controlled strategy reports",
-			"Strategy sharing within a private community",
-			"Advanced greeks (Delta, Gamma, Theta, Vega)",
-			"Sentiment indicators from integrated market news feeds",
-			"Full API access",
-			"Integrate custom datasets",
-			"Webhook triggers for automated backtesting schedules",
-			"Integration with Slack/Teams notifications",
-		],
-		cta: "Upgrade to Plus",
-	},
 ];
 </script>
 
@@ -222,6 +193,9 @@ const plans = [
 	grid-template-columns: 1fr;
 	gap: 2rem;
 	margin-top: 4rem;
+	max-width: 900px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .pricing-card {
@@ -322,12 +296,6 @@ const plans = [
 
 	.pricing-title {
 		font-size: 3rem;
-	}
-}
-
-@media (min-width: 1024px) {
-	.pricing-grid {
-		grid-template-columns: repeat(3, 1fr);
 	}
 }
 

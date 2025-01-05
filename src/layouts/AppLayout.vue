@@ -1,5 +1,17 @@
 <script setup>
-// Layout for protected app pages
+import { onMounted } from "vue";
+import { useAuthStore } from "../stores/auth";
+import { connectWebSocket } from "../ws/client";
+
+const authStore = useAuthStore();
+const { fetchUser } = authStore;
+
+onMounted(async () => {
+	const user = await fetchUser();
+	if (user) {
+		connectWebSocket(user.id);
+	}
+});
 </script>
 
 <template>
