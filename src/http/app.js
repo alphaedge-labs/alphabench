@@ -52,3 +52,15 @@ export const createSubscription = async (planId, paymentToken) => {
 	});
 	return response.data;
 };
+
+export const joinWaitlist = async (email) => {
+	const response = await client.post("/v1/waitlist/join", {
+		email: email,
+	});
+	return response.data;
+};
+
+export const getPastBacktests = async () => {
+	const response = await client.get("/v1/backtests/past");
+	return response.data;
+};

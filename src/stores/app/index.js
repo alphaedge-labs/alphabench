@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import initialState from "./intialState";
 import { format } from "date-fns";
-import { getBacktest } from "../../http/app";
+import { getBacktest, getPastBacktests } from "../../http/app";
 
 export const useAppStore = defineStore("app", {
 	persist: true,
@@ -14,10 +14,16 @@ export const useAppStore = defineStore("app", {
 			const today = new Date();
 			const formattedDate = format(today, "yyyy-MM-dd");
 
-			this.backtestHistory.thisWeek.push({
-				...data,
-				date: formattedDate,
-			});
+			this.backtestHistory = {
+                ...this.backtestHistory,
+                thisWeek: [
+                    {
+                        ...data,
+                        date: formattedDate,
+                    },
+                    ...(this.backtestHistory?.thisWeek || [])
+				]
+			};
 		},
 		async getBacktestById(id) {
 			const data = await getBacktest(id);
@@ -31,6 +37,11 @@ export const useAppStore = defineStore("app", {
 					...data,
 				};
 			}
+		},
+		async getPastBacktests() {
+			const data = await getPastBacktests();
+			this.backtestHistory = data;
+			return data;
 		},
 	},
 });
