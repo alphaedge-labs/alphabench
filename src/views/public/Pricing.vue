@@ -42,7 +42,7 @@
 				<div class="card-footer">
 					<button
 						:class="['cta-button', { primary: index === 1 }]"
-						@click="navigateToApp"
+						@click="navigateToApp(index)"
 					>
 						{{ plan.cta }}
 					</button>
@@ -95,23 +95,78 @@
 				</section>
 			</div>
 		</div>
+
+		<div v-if="showWaitlistModal" class="modal-overlay">
+			<div class="modal-content">
+				<button class="close-button" @click="showWaitlistModal = false">×</button>
+				
+				<h3 class="modal-title">Join the Waitlist</h3>
+				<p class="modal-description">Be the first to know when Pro features are available</p>
+				
+				<form @submit.prevent="handleWaitlistSubmit" class="waitlist-form">
+					<input
+						type="email"
+						v-model="email"
+						placeholder="Enter your email"
+						required
+						class="email-input"
+					/>
+					<button type="submit" class="submit-button" :disabled="isSubmitting">
+						{{ isSubmitting ? 'Joining...' : 'Join Waitlist' }}
+					</button>
+				</form>
+				
+				<p v-if="submitted" class="success-message">
+					You'll receive an email from us when we're ready to roll out pro features!
+				</p>
+			</div>
+		</div>
 	</div>
 </template>
 
 <script setup>
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../../stores/auth";
+import { ref } from "vue";
+import { joinWaitlist } from "../../http/app";
 
 const router = useRouter();
 
-const navigateToApp = () => {
-	router.push("/app");
-};
+const showWaitlistModal = ref(false)
+const email = ref('')
+const isSubmitting = ref(false)
+const submitted = ref(false)
+
+const navigateToApp = (index) => {
+	if (plans[index].isOnWaitlist) {
+		showWaitlistModal.value = true
+	} else {
+		router.push('/app')
+	}
+}
+
+const handleWaitlistSubmit = async () => {
+	try {
+		isSubmitting.value = true
+		await joinWaitlist(email.value)
+		submitted.value = true
+		email.value = ''
+		setTimeout(() => {
+			showWaitlistModal.value = false
+			submitted.value = false
+		}, 3000)
+	} catch (error) {
+		console.error('Error joining waitlist:', error)
+	} finally {
+		isSubmitting.value = false
+	}
+}
 
 const plans = [
 	{
 		name: "Free",
 		price: "$0",
+		isOnWaitlist: false,
 		description: "For beginners, hobbyists, and casual investors",
 		features: [
 			"Simple strategies in natural language",
@@ -127,13 +182,14 @@ const plans = [
 			"Standard PDF/HTML report",
 			"Basic executive summary & key metrics",
 			"Few pre-built template strategies",
-			"Basic price data (OHLC) only",
+			"Basic price data (OHLC) only"
 		],
-		cta: "Start Free",
+		cta: "Start Free"
 	},
 	{
 		name: "Pro",
 		price: "$20",
+		isOnWaitlist: true,
 		description: "For intermediate traders, analysts, and small teams",
 		features: [
 			"Complex, multi-parameter strategies",
@@ -154,9 +210,9 @@ const plans = [
 			"Expanded library of strategies",
 			"Basic implied volatility for FnO",
 			"Invite 1-2 team members",
-			"Basic commenting on strategies",
+			"Basic commenting on strategies"
 		],
-		cta: "Upgrade to Pro",
+		cta: "Join Waitlist"
 	},
 ];
 </script>
@@ -342,5 +398,91 @@ const plans = [
 
 .refunds-content a:hover {
 	text-decoration: underline;
+}
+
+.modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(255, 255, 255, 0.1);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
+}
+
+.modal-content {
+	background: rgba(255, 255, 255, 0.9);
+	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+	backdrop-filter: blur(4px);
+	-webkit-backdrop-filter: blur(4px);
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	padding: 2rem;
+	border-radius: 0.5rem;
+	width: 90%;
+	max-width: 500px;
+	position: relative;
+}
+
+.close-button {
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
+	border: none;
+	background: none;
+	font-size: 1.5rem;
+	cursor: pointer;
+	color: #6b7280;
+}
+
+.modal-title {
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: #111827;
+	margin-bottom: 0.5rem;
+}
+
+.modal-description {
+	color: #6b7280;
+	margin-bottom: 1.5rem;
+}
+
+.waitlist-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.email-input {
+	padding: 0.75rem;
+	border: 1px solid #e5e7eb;
+	border-radius: 0.375rem;
+	font-size: 1rem;
+}
+
+.submit-button {
+	padding: 0.75rem 1.5rem;
+	border-radius: 0.375rem;
+	font-weight: 600;
+	cursor: pointer;
+	background: linear-gradient(45deg, #111111, #535bf2);
+	color: white;
+	border: none;
+	transition: opacity 0.2s;
+}
+
+.submit-button:disabled {
+	opacity: 0.7;
+	cursor: not-allowed;
+}
+
+.success-message {
+	margin-top: 1rem;
+	color: #059669;
+	text-align: center;
 }
 </style>

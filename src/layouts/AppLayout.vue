@@ -1,15 +1,21 @@
 <script setup>
 import { onMounted } from "vue";
 import { useAuthStore } from "../stores/auth";
+import { useAppStore } from "../stores/app";
 import { connectWebSocket } from "../ws/client";
 
 const authStore = useAuthStore();
 const { fetchUser } = authStore;
 
+const appStore = useAppStore();
+const { getPastBacktests } = appStore;
+
 onMounted(async () => {
 	const user = await fetchUser();
+
 	if (user) {
 		connectWebSocket(user.id);
+		await getPastBacktests();
 	}
 });
 </script>

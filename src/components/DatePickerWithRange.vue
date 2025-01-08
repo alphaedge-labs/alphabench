@@ -11,7 +11,6 @@
 			class="date-picker"
 			:attributes="attributes"
 			@input="handleDateChange"
-			disabled
 		>
 			<template #default="{ inputValue, inputEvents }">
 				<div class="date-input">
@@ -20,9 +19,8 @@
 							inputValue.end || 'End date'
 						}`"
 						v-on="{ ...inputEvents.start, ...inputEvents.end }"
-						disabled
 						placeholder="Select date range"
-						class="date-field single-field disabled"
+						class="date-field single-field"
 					/>
 				</div>
 			</template>
@@ -49,10 +47,8 @@ const selectedRange = ref({
 	end: props.modelValue?.end || null,
 });
 
-const minDate = new Date();
-minDate.setFullYear(minDate.getFullYear() - 1);
-
-const maxDate = new Date();
+const minDate = new Date('2024-01-08');
+const maxDate = new Date('2025-01-06');
 
 const masks = {
 	input: "DD-MM-YYYY",
@@ -157,13 +153,12 @@ watch(
 	font-size: 0.875rem;
 }
 
-/* :deep(.vc-container) {
+:deep(.vc-container) {
 	border: 1px solid #e2e8f0;
 	border-radius: 0.5rem;
-} */
+}
 
 :deep(.vc-container) {
-	pointer-events: none;
 	opacity: 0.75;
 }
 
@@ -172,8 +167,17 @@ watch(
 	background-color: transparent !important;
 }
 
+:deep(.vc-arrow) {
+	background-color: transparent !important;
+}
+
+:deep(.vc-title) {
+	background-color: transparent !important;
+	color: #1f2937;
+}
+
 :deep(.vc-day-content:hover) {
-	background-color: #111111 !important;
+	background-color: #535bf255 !important;
 	color: white;
 }
 

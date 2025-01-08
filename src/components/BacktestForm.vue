@@ -118,8 +118,8 @@ const { pushToBacktestHistory } = appStore;
 
 const formData = reactive({
 	dateRange: {
-		start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
-		end: new Date(Date.now() - 24 * 60 * 60 * 1000), // yesterday
+		start: new Date("2024-01-08"),
+		end: new Date("2024-02-06"),
 	},
 	asset: null,
 	strategy: "",
