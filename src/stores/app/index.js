@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import initialState from "./intialState";
 import { format } from "date-fns";
+
 import { getBacktest, getPastBacktests, getBacktestReportById } from "../../http/app";
 
 export const useAppStore = defineStore("app", {
