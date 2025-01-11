@@ -1,7 +1,10 @@
 import { defineStore } from "pinia";
 import initialState from "./initialState";
+
 import { googleLogin } from "../../http/auth";
 import { getCurrentUser } from "../../http/app";
+
+import tracker from "../../services/tracker";
 
 export const useAuthStore = defineStore("auth", {
 	state: () => initialState,
@@ -19,11 +22,20 @@ export const useAuthStore = defineStore("auth", {
 		async fetchUser() {
 			const data = await getCurrentUser();
 			this.user = data;
+
+			if (data) {
+				tracker.setUserID(data.id);
+				tracker.setMetadata("email", data.email);
+				tracker.setMetadata("name", data.name);
+			}
+
 			return data;
 		},
 		logout() {
 			this.token = null;
 			this.user = null;
+
+			tracker.stop();
 		},
 	},
 });

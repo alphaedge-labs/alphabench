@@ -261,28 +261,34 @@ onMounted(() => {
 }
 
 .magical-textarea {
-	min-height: 100px;
-	padding: 0.75rem;
-	border-radius: 0.375rem;
-	border: 1px solid transparent;
-	background: linear-gradient(white, white) padding-box,
-		linear-gradient(90deg, #111111, #0575e6, #535bf2) border-box;
-	background-size: 300% 100%;
-	transition: background-position 3s linear;
+    min-height: 100px;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    border: 1.2px solid transparent;
+    background: 
+        linear-gradient(white, white) padding-box,
+        linear-gradient(90deg, 
+            #111111, #0575e6, #535bf2, #111111, #0575e6) border-box; /* Added repeating colors */
+    background-size: 200% 100%; /* Reduced to 200% for smoother loop */
+    background-position: 0% 50%;
+    transition: background-position 0.3s linear;
 }
 
 .magical-textarea:focus {
-	outline: none;
-	animation: border-flow 3s linear infinite;
+    outline: none;
+    animation: border-flow 3s linear infinite;
 }
 
 @keyframes border-flow {
-	0% {
-		background-position: 0% 50%;
-	}
-	100% {
-		background-position: 300% 50%;
-	}
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%; /* Added middle keyframe */
+    }
+    100% {
+        background-position: 200% 50%;
+    }
 }
 
 .submit-button {

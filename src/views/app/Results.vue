@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter, onBeforeRouteUpdate } from "vue-router";
 import { marked } from "marked";
 
 import ProfileDropdown from "../../components/ProfileDropdown.vue";
@@ -19,7 +19,7 @@ import { storeToRefs } from "pinia";
 import { useAppStore } from "../../stores/app";
 
 const appStore = useAppStore();
-const { getBacktestById } = appStore;
+const { getBacktestById, getBacktestReport } = appStore;
 const { backtest } = storeToRefs(appStore);
 
 const fetchResults = async () => {
@@ -28,6 +28,16 @@ const fetchResults = async () => {
 
 		const backtestId = route.params.id;
 		const backtestData = await getBacktestById(backtestId);
+
+		if (backtestData.report_url) {
+			const response = await getBacktestReport(backtestId);
+
+			if (!response) {
+				throw new Error('Failed to fetch report content');
+			}
+			
+			resultContent.value = marked(response);
+		}
 
 		formDetails.value = {
 			asset: backtestData.instrument_symbol,
@@ -70,7 +80,39 @@ const shareResult = async () => {
 	}
 };
 
+
+// Handle route updates
+onBeforeRouteUpdate((to, from, next) => {
+  // Reset the state
+  resultContent.value = "";
+  isLoading.value = true;
+  error.value = null;
+  formDetails.value = null;
+  shareableLink.value = "";
+  showShareLink.value = false;
+  
+  next();
+  // Call fetchResults after the navigation is confirmed
+  nextTick(() => fetchResults());
+});
 watch(() => route.params.id, fetchResults);
+
+watch(
+  () => backtest.value?.report_url,
+  async (newReportUrl) => {
+    if (newReportUrl) {
+      try {
+        const response = await getBacktestReport(backtest.value.id);
+        if (!response) {
+          throw new Error('Failed to fetch report content');
+        }
+        resultContent.value = marked(response);
+      } catch (err) {
+        error.value = "Failed to load report content. Please try again.";
+      }
+    }
+  }
+);
 
 onMounted(fetchResults);
 </script>
@@ -137,49 +179,84 @@ onMounted(fetchResults);
 			v-if="backtest && !backtest.generated_report"
 			class="loading-timeline"
 		>
-			<div v-if="backtest.status === 'failed'" class="failed-timeline">
-				Backtesting failed...<br />We're monitoring your request
+			<div v-if="['script_generation_failed', 'validation_failed', 'execution_failed', 'report_generation_failed'].includes(backtest.status)" 
+				class="failed-timeline">
+				<div class="error-message">
+					<span v-if="backtest.status === 'script_generation_failed'">
+						Strategy script generation failed...<br />Our team has been notified
+					</span>
+					<span v-else-if="backtest.status === 'validation_failed'">
+						Strategy validation failed...<br />Please check your strategy parameters
+					</span>
+					<span v-else-if="backtest.status === 'execution_failed'">
+						Backtesting execution failed...<br />We're investigating the issue
+					</span>
+					<span v-else-if="backtest.status === 'report_generation_failed'">
+						Report generation failed...<br />Please try again later
+					</span>
+				</div>
 			</div>
-
+			
 			<div v-else class="timeline">
-				<div
-					class="timeline-item"
+				<!-- Script Generation -->
+				<div class="timeline-item"
 					:class="{
-						active:
-							backtest.status === 'pending' ||
-							backtest.status === 'generating_script' ||
-							backtest.status === 'ready_for_validation',
-						'pulse-dot':
-							backtest.status === 'pending' ||
-							backtest.status === 'generating_script',
-					}"
-				>
+						'active': [
+							'script_generation_in_progress', 'ready_for_validation', 
+							'validation_in_progress', 'validation_passed',
+							'execution_in_progress', 'execution_successful',
+							'report_generation_in_progress', 'report_generation_successful'
+						].includes(backtest.status),
+						'pulse-dot': backtest.status === 'script_generation_in_progress'
+					}">
 					<div class="timeline-dot"></div>
 					<div class="timeline-content">
-						<h4>Backtesting</h4>
-						<p>Running your strategy against historical data</p>
+						<h4>Strategy Preparation</h4>
+						<p>Thinking about the strategy and collecting data</p>
 					</div>
 				</div>
-				<div
-					class="timeline-item"
+
+				<!-- Validation -->
+				<div class="timeline-item"
 					:class="{
-						active: backtest.status === 'ready_for_validation',
-						'pulse-dot': backtest.status === 'ready_for_validation',
-					}"
-				>
+						'active': [
+							'validation_in_progress', 'validation_passed',
+							'execution_in_progress', 'execution_successful',
+							'report_generation_in_progress', 'report_generation_successful'
+						].includes(backtest.status),
+						'pulse-dot': backtest.status === 'validation_in_progress'
+					}">
 					<div class="timeline-dot"></div>
 					<div class="timeline-content">
 						<h4>Validation</h4>
-						<p>Validating strategy performance</p>
+						<p>Validating strategy parameters</p>
 					</div>
 				</div>
-				<div
-					class="timeline-item"
+
+				<!-- Execution -->
+				<div class="timeline-item"
 					:class="{
-						active: backtest.ready_for_report,
-						'pulse-dot': backtest.ready_for_report,
-					}"
-				>
+						'active': [
+							'execution_in_progress', 'execution_successful',
+							'report_generation_in_progress', 'report_generation_successful'
+						].includes(backtest.status),
+						'pulse-dot': backtest.status === 'execution_in_progress'
+					}">
+					<div class="timeline-dot"></div>
+					<div class="timeline-content">
+						<h4>Backtesting</h4>
+						<p>Running strategy against historical data</p>
+					</div>
+				</div>
+
+				<!-- Report Generation -->
+				<div class="timeline-item"
+					:class="{
+						'active': [
+							'report_generation_in_progress', 'report_generation_successful'
+						].includes(backtest.status),
+						'pulse-dot': backtest.status === 'report_generation_in_progress'
+					}">
 					<div class="timeline-dot"></div>
 					<div class="timeline-content">
 						<h4>Report Generation</h4>
@@ -190,7 +267,7 @@ onMounted(fetchResults);
 		</div>
 
 		<!-- Results Card -->
-		<div v-else class="results-card">
+		<div v-else class="results-card fade-in">
 			<div v-if="isLoading" class="loading-state">Loading results...</div>
 
 			<div v-else class="markdown-content" v-html="resultContent"></div>
@@ -459,7 +536,7 @@ onMounted(fetchResults);
 	position: relative;
 	max-width: 450px;
 	margin: 0 auto;
-	padding: 2rem 0;
+	padding: 0;
 }
 
 .timeline::before {
@@ -480,6 +557,7 @@ onMounted(fetchResults);
 	transition: opacity 0.3s ease;
 	display: flex;
 	align-items: center;
+	text-align: left;
 }
 
 .timeline-item.active {
@@ -525,6 +603,21 @@ onMounted(fetchResults);
 	color: #6b7280;
 }
 
+.error-message {
+    text-align: center;
+    color: #dc2626;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.failed-timeline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    padding: 2rem;
+}
+
 @keyframes pulse {
 	0% {
 		box-shadow: 0 0 0 0 rgba(83, 91, 242, 0.4);
@@ -539,6 +632,21 @@ onMounted(fetchResults);
 
 .pulse-dot .timeline-dot {
 	animation: pulse 1s infinite;
+}
+
+.fade-in {
+  animation: fadeIn 1s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 768px) {

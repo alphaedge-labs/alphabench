@@ -64,3 +64,8 @@ export const getPastBacktests = async () => {
 	const response = await client.get("/v1/backtests/past");
 	return response.data;
 };
+
+export const getBacktestReportById = async (id) => {
+	const response = await client.get(`/v1/backtests/${id}/report`);
+	return response.data;
+};
