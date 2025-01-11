@@ -10,11 +10,22 @@ import "./style.css";
 import "v-calendar/style.css";
 
 import App from "./App.vue";
+import tracker from "./services/tracker";
 
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 
+if (!import.meta.env.DEV) {
+	tracker.start();
+}
+
 const app = createApp(App);
+
+app.config.errorHandler = (err, instance, info) => {
+  // Log errors to OpenReplay
+  tracker.handleError(err);
+//   console.error('Vue Error:', err, info);
+};
 
 app.use(
 	VueGtag,

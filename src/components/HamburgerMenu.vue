@@ -37,15 +37,6 @@ onUnmounted(() => {
 	document.removeEventListener("click", handleClickOutside);
 });
 
-// const backtestHistory = {
-// 	thisWeek: [
-// 		{ id: 1, name: "BTC Strategy #1", date: "2024-03-20" },
-// 		{ id: 2, name: "ETH Trading Test", date: "2024-03-19" },
-// 	],
-// 	lastMonth: [{ id: 3, name: "DOGE Analysis", date: "2024-02-28" }],
-// 	older: [{ id: 4, name: "Long-term Strategy", date: "2024-01-15" }],
-// };
-
 const appStore = useAppStore();
 const { backtestHistory } = storeToRefs(appStore);
 
@@ -283,6 +274,27 @@ const hasBacktestHistory = computed(() => {
 .drawer-content {
 	height: 100%;
 	overflow-y: auto;
+	scrollbar-width: thin;
+    scrollbar-color: #c0c0c0 #f1f1f1;
+
+	&::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background: #c0c0c0;
+        border-radius: 3px;
+        transition: background 0.2s ease;
+    }
+    
+    &::-webkit-scrollbar-thumb:hover {
+        background: #535bf2;
+    }
 }
 
 .history-section {

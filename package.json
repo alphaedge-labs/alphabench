@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@openreplay/tracker": "^15.0.3",
     "@popperjs/core": "^2.11.8",
     "axios": "^1.7.9",
     "date-fns": "^2.30.0",

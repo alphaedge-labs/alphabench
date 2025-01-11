@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import initialState from "./intialState";
 import { format } from "date-fns";
-import { getBacktest, getPastBacktests } from "../../http/app";
+import { getBacktest, getPastBacktests, getBacktestReportById } from "../../http/app";
 
 export const useAppStore = defineStore("app", {
 	persist: true,
@@ -28,6 +28,10 @@ export const useAppStore = defineStore("app", {
 		async getBacktestById(id) {
 			const data = await getBacktest(id);
 			this.backtest = data;
+			return data;
+		},
+		async getBacktestReport(id) {
+			const data = await getBacktestReportById(id);
 			return data;
 		},
 		updateBacktest(data) {
