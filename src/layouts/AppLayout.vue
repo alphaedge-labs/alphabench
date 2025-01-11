@@ -11,7 +11,12 @@ const appStore = useAppStore();
 const { getPastBacktests } = appStore;
 
 onMounted(async () => {
-	const user = await fetchUser();
+	let user = await fetchUser();
+
+	if (!user) {
+		// fetch user again
+		user = await fetchUser();
+	}
 
 	if (user) {
 		connectWebSocket(user.id);
