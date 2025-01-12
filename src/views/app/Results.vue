@@ -184,7 +184,7 @@ onMounted(fetchResults);
 					'validation_failed', 
 					'execution_failed', 
 					'report_generation_failed'
-				].includes(backtest.status)" 
+				].includes(backtest.status)"
 				class="failed-timeline">
 				<div class="error-message">
 					<span v-if="backtest.status === 'script_generation_failed'">
