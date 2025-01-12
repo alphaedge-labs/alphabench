@@ -179,7 +179,12 @@ onMounted(fetchResults);
 			v-if="backtest && !backtest.generated_report"
 			class="loading-timeline"
 		>
-			<div v-if="['script_generation_failed', 'validation_failed', 'execution_failed', 'report_generation_failed'].includes(backtest.status)" 
+			<div v-if="[
+					'script_generation_failed', 
+					'validation_failed', 
+					'execution_failed', 
+					'report_generation_failed'
+				].includes(backtest.status)" 
 				class="failed-timeline">
 				<div class="error-message">
 					<span v-if="backtest.status === 'script_generation_failed'">
@@ -269,7 +274,6 @@ onMounted(fetchResults);
 		<!-- Results Card -->
 		<div v-else class="results-card fade-in">
 			<div v-if="isLoading" class="loading-state">Loading results...</div>
-
 			<div v-else class="markdown-content" v-html="resultContent"></div>
 		</div>
 	</div>
@@ -290,7 +294,6 @@ onMounted(fetchResults);
 }
 
 .results-card {
-	width: 100%;
 	background: white;
 	border-radius: 0.5rem;
 	padding: 2rem;
