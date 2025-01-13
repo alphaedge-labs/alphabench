@@ -130,9 +130,9 @@ onMounted(fetchResults);
 					<h3>Strategy Details</h3>
 				</div>
 				<div class="button-wrapper">
-					<button @click="editStrategy" class="edit-button secondary">
+					<!--<button @click="editStrategy" class="edit-button secondary">
 						Edit Strategy
-					</button>
+					</button>-->
 					<button @click="shareResult" class="share-button">
 						Share Results
 					</button>

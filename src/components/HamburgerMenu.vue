@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/app";
@@ -38,14 +38,59 @@ onUnmounted(() => {
 });
 
 const appStore = useAppStore();
+const { searchPastBacktests } = appStore;
 const { backtestHistory } = storeToRefs(appStore);
 
+const searchQuery = ref("");
+const searchResults = ref(null);
+const isSearching = ref(false);
+
 const hasBacktestHistory = computed(() => {
+	if (searchResults.value) {
+		return (
+			searchResults.value.thisWeek.length > 0 ||
+			searchResults.value.lastMonth.length > 0 ||
+			searchResults.value.older.length > 0
+		);
+	}
+
 	return (
 		backtestHistory.value.thisWeek.length > 0 ||
 		backtestHistory.value.lastMonth.length > 0 ||
 		backtestHistory.value.older.length > 0
 	);
+});
+
+
+const debounce = (fn, delay) => {
+	let timeoutId;
+	return (...args) => {
+		clearTimeout(timeoutId);
+		timeoutId = setTimeout(() => fn(...args), delay);
+	};
+};
+
+const performSearch = async (query) => {
+	if (!query.trim()) {
+		searchResults.value = null;
+		return;
+	}
+	
+	try {
+		isSearching.value = true;
+		const results = await searchPastBacktests(query);
+		searchResults.value = results;
+	} catch (error) {
+		console.error('Search failed:', error);
+	} finally {
+		isSearching.value = false;
+	}
+};
+
+const debouncedSearch = debounce(performSearch, 300);
+
+watch(searchQuery, (newQuery) => {
+	debouncedSearch(newQuery);
 });
 </script>
 
@@ -91,7 +136,60 @@ const hasBacktestHistory = computed(() => {
 					</button>
 				</div>
 
-				<div v-if="hasBacktestHistory" class="history-sections">
+				<div class="search-container" :class="{ 'is-searching': isSearching }">
+					<div class="search-input-wrapper">
+						<input
+							type="text"
+							v-model="searchQuery"
+							placeholder="Search backtests..."
+							class="search-input"
+							aria-label="Search backtests"
+						/>
+					</div>
+				</div>
+
+				<div v-if="searchResults && hasBacktestHistory" class="history-sections">
+					<div v-if="searchResults.thisWeek.length > 0" class="history-section">
+						<h4>This Week</h4>
+						<div
+							v-for="item in searchResults.thisWeek"
+							:key="item.id"
+							class="history-item"
+							@click="navigateToResult(item.id)"
+						>
+							<span class="item-name">{{ item.name }}</span>
+							<span class="item-date">{{ item.date }}</span>
+						</div>
+					</div>
+
+					<div v-if="searchResults.lastMonth.length > 0" class="history-section">
+						<h4>Last Month</h4>
+						<div
+							v-for="item in searchResults.lastMonth"
+							:key="item.id"
+							class="history-item"
+							@click="navigateToResult(item.id)"
+						>
+							<span class="item-name">{{ item.name }}</span>
+							<span class="item-date">{{ item.date }}</span>
+						</div>
+					</div>
+
+					<div v-if="searchResults.older.length > 0" class="history-section">
+						<h4>Long Time Ago</h4>
+						<div
+							v-for="item in searchResults.older"
+							:key="item.id"
+							class="history-item"
+							@click="navigateToResult(item.id)"
+							>
+							<span class="item-name">{{ item.name }}</span>
+							<span class="item-date">{{ item.date }}</span>
+						</div>
+					</div>
+				</div>
+
+				<div v-else-if="hasBacktestHistory" class="history-sections">
 					<div class="history-section">
 						<h4>This Week</h4>
 						<div
@@ -105,7 +203,7 @@ const hasBacktestHistory = computed(() => {
 						</div>
 					</div>
 
-					<div class="history-section">
+					<div class="history-section" v-if="backtestHistory.lastMonth.length > 0">
 						<h4>Last Month</h4>
 						<div
 							v-for="item in backtestHistory.lastMonth"
@@ -118,7 +216,7 @@ const hasBacktestHistory = computed(() => {
 						</div>
 					</div>
 
-					<div class="history-section">
+					<div class="history-section" v-if="backtestHistory.older.length > 0">
 						<h4>Long Time Ago</h4>
 						<div
 							v-for="item in backtestHistory.older"
@@ -149,9 +247,9 @@ const hasBacktestHistory = computed(() => {
 						<path d="M1 3h22v5H1z" />
 						<path d="M10 12h4" />
 					</svg>
-					<p>No backtest history yet</p>
+					<p>{{ searchQuery ? 'No results found' : 'No backtest history yet' }}</p>
 					<p class="empty-subtitle">
-						Run your first backtest to see it here
+						{{ searchQuery ? 'Try a different search term' : 'Run your first backtest to see it here' }}
 					</p>
 				</div>
 			</div>
@@ -229,6 +327,7 @@ const hasBacktestHistory = computed(() => {
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 	transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	z-index: 999;
+ 	will-change: transform;
 }
 
 .drawer-open {
@@ -371,6 +470,10 @@ const hasBacktestHistory = computed(() => {
 	.history-item {
 		padding: 0.6rem 0.75rem;
 	}
+
+	.search-input {
+		width: 200px;
+	}
 }
 
 .history-sections {
@@ -402,5 +505,63 @@ const hasBacktestHistory = computed(() => {
 	margin-top: 0.5rem;
 	font-size: 0.875rem;
 	color: #999;
+}
+
+.search-container {
+	padding: 1rem 0;
+	border-bottom: 1px solid #f0f0f0;
+	background: linear-gradient(to bottom, #ffffff, #fafafa);
+}
+
+.search-input-wrapper {
+	position: relative;
+	margin: 0 auto;
+	width: 100%;
+}
+
+.search-input {
+	width: 240px;
+	padding: 0.75rem 1rem;
+	padding-left: 2.5rem;
+	border: 2px solid #e0e0e0;
+	border-radius: 10px;
+	font-size: 0.875rem;
+	transition: all 0.2s ease;
+	background: white;
+	color: #333;
+}
+
+.search-input::placeholder {
+	color: #999;
+}
+
+.search-input:focus {
+	outline: none;
+	border-color: #535bf2;
+	box-shadow: 0 0 0 3px rgba(83, 91, 242, 0.1);
+}
+
+.search-input.with-spinner {
+	padding-right: 2.5rem;
+}
+
+.search-input-wrapper::before {
+	content: '';
+	position: absolute;
+	left: 2.5rem;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 16px;
+	height: 16px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	pointer-events: none;
+}
+
+@media (max-width: 768px) {
+	.search-input-wrapper::before {
+		left: 1.5rem;
+	}
 }
 </style>

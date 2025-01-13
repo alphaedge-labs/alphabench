@@ -6,7 +6,7 @@
 		/>
 		<div v-else class="card">
 			<header class="card-header">
-				<h2>What do you want to test today?</h2>
+				<h2>What would you like to test today?</h2>
 			</header>
 			<div class="card-content">
 				<div v-if="notification" :class="['alert', notification.type]">
@@ -39,7 +39,7 @@
 					<div class="form-group">
 						<div class="label-with-info">
 							<label for="strategy"
-								>Tell me your strategy in simplest words</label
+								>Describe your strategy in simplest words</label
 							>
 							<button
 								type="button"
