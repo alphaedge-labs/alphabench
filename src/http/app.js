@@ -69,3 +69,8 @@ export const getBacktestReportById = async (id) => {
 	const response = await client.get(`/v1/backtests/${id}/report`);
 	return response.data;
 };
+
+export const searchBacktests = async (query) => {
+	const response = await client.get(`/v1/backtests/past/search?q=${encodeURIComponent(query)}`);
+	return response.data;
+};
