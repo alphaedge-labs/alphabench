@@ -190,7 +190,7 @@ watch(searchQuery, (newQuery) => {
 				</div>
 
 				<div v-else-if="hasBacktestHistory" class="history-sections">
-					<div class="history-section">
+					<div class="history-section" v-if="backtestHistory.thisWeek.length > 0">
 						<h4>This Week</h4>
 						<div
 							v-for="item in backtestHistory.thisWeek"
