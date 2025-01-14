@@ -6,6 +6,10 @@ import { useAppStore } from "../stores/app";
 const socket = ref(null);
 
 function connectWebSocket(userId) {
+	if (socket.value) {
+		return;
+	}
+
 	const appStore = useAppStore();
 	const { toggleWsConnectionState, updateBacktest } = appStore;
 
@@ -46,9 +50,11 @@ function connectWebSocket(userId) {
 }
 
 function disconnectWebSocket() {
-	if (socket.value) {
-		socket.value.close();
+	if (!socket.value) {
+		return;
 	}
+
+	socket.value.close();
 }
 
 export { connectWebSocket, disconnectWebSocket };
