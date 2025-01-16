@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { useRoute } from "vue-router";
 
 import pencilIcon from "../assets/write-pencil.svg";
+import newChatIcon from "../assets/new-chat.svg";
 import userIconDefault from "../assets/user_default.jpg";
 import UpgradeModal from "./UpgradeModal.vue";
 
@@ -30,7 +31,7 @@ const handleLogout = () => {
 			class="app-icon"
 			title="Go to App"
 		>
-			<img :src="pencilIcon" alt="Google" />
+			<img :src="newChatIcon" alt="New Chat" />
 		</router-link>
 
 		<div class="profile-dropdown">

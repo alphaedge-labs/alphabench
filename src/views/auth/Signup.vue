@@ -26,11 +26,10 @@ const signup = async () => {
 
 const signupWithGoogle = async () => {
 	try {
-		await authStore.signupWithGoogle();
-		const redirectPath = route.query.redirect || "/app";
-		router.push(redirectPath);
+		await authStore.initiateGoogleLogin();
 	} catch (error) {
 		// Handle error
+		console.error('Failed to initiate Google signup:', error);
 	}
 };
 </script>

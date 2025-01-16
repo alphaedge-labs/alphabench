@@ -25,11 +25,10 @@ const login = async () => {
 
 const loginWithGoogle = async () => {
 	try {
-		await authStore.loginWithGoogle();
-		const redirectPath = route.query.redirect || "/app";
-		router.push(redirectPath);
+		await authStore.initiateGoogleLogin();
 	} catch (error) {
 		// Handle error
+		console.error('Failed to initiate Google login:', error);
 	}
 };
 </script>
