@@ -62,6 +62,12 @@ const routes = [
 				meta: { title: "Signup | alphabench" },
 				component: () => import("../views/auth/Signup.vue"),
 			},
+			{
+				path: "google/callback",
+				name: "google-callback",
+				meta: { title: "Auth Callback | alphabench" },
+				component: () => import("../views/auth/GoogleCallback.vue"),
+			},
 		],
 	},
 	{
@@ -72,17 +78,23 @@ const routes = [
 				path: "",
 				name: "main",
 				meta: { title: "Playground | alphabench" },
-				component: () => import("../views/app/Main.vue"),
+				component: () => import("../views/app/Main.vue")
 			},
 			{
-				path: "/results/:id",
+				path: "results/:id",
+				name: "results",
 				component: () => import("../views/app/Results.vue"),
-				meta: { title: "Results | alphabench" },
+				meta: { title: "Results | alphabench" }
 			},
 			{
-				path: "/app/profile",
-				component: () => import("../views/app/Profile.vue"),
-				meta: { requiresAuth: true },
+				path: "profile",
+				name: "profile",
+				component: () => import("../views/app/Profile.vue")
+			},
+			{
+				path: "search",
+				name: "search",
+				component: () => import("../views/app/ProSearch.vue")
 			},
 			// Add more protected routes here
 		],
@@ -114,7 +126,7 @@ router.beforeEach((to, from, next) => {
 	if (to.meta.requiresAuth && !authStore.isAuthenticated) {
 		next({ name: "login", query: { redirect: to.fullPath } });
 	} else if (authStore.isAuthenticated && to.path.startsWith("/auth/")) {
-		next({ name: "dashboard" });
+		next({ name: "main" });
 	} else {
 		next();
 	}
