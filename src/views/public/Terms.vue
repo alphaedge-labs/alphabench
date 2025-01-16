@@ -103,7 +103,7 @@ const currentDate = new Date().toLocaleDateString();
 						<p>
 							For any questions regarding these terms, please
 							contact:<br />
-							Email: corevatsal@gmail.com<br />
+							Email: contact@alphabench.in<br />
 							Address: Dadar, Mumbai, 400014
 						</p>
 					</section>
