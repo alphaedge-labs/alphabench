@@ -88,8 +88,8 @@
 					<p>
 						For any questions or to request a refund, please cancel
 						subscription from your profile or contact me at
-						<a href="mailto:corevatsal@gmail.com"
-							>corevatsal@gmail.com</a
+						<a href="mailto:contact@alphabench.in"
+							>contact@alphabench.in</a
 						>.
 					</p>
 				</section>
