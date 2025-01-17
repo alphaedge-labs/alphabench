@@ -13,14 +13,17 @@ const isLoading = ref(true);
 const error = ref(null);
 const formDetails = ref(null);
 const shareableLink = ref("");
-const showShareLink = ref(false);
 
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../../stores/app";
+import { useAuthStore } from "../../stores/auth";
 
 const appStore = useAppStore();
-const { getBacktestById, getBacktestReport } = appStore;
+const authStore = useAuthStore();
+
+const { getBacktestById, getBacktestReport, getShareLink } = appStore;
 const { backtest } = storeToRefs(appStore);
+const { user } = storeToRefs(authStore);
 
 const fetchResults = async () => {
 	try {
@@ -66,15 +69,13 @@ const editStrategy = () => {
 
 const shareResult = async () => {
 	try {
-		const response = await fetch(
-			`/api/v1/results/${route.params.id}/share`
-		);
-		if (!response.ok) {
+		const response = await getShareLink(route.params.id);
+		if (!response) {
 			throw new Error("Failed to generate share link");
 		}
-		const data = await response.json();
-		shareableLink.value = data.shareUrl;
-		showShareLink.value = true;
+		shareableLink.value = response.shareUrl;
+		await navigator.clipboard.writeText(shareableLink.value);
+		alert("Link copied to clipboard");
 	} catch (err) {
 		error.value = err.message;
 	}
@@ -89,7 +90,6 @@ onBeforeRouteUpdate((to, from, next) => {
   error.value = null;
   formDetails.value = null;
   shareableLink.value = "";
-  showShareLink.value = false;
   
   next();
   // Call fetchResults after the navigation is confirmed
@@ -129,30 +129,25 @@ onMounted(fetchResults);
 				<div class="title-share-wrapper">
 					<h3>Strategy Details</h3>
 				</div>
-				<div class="button-wrapper">
+				<div class="button-wrapper" v-if="backtest.user_id === user.id">
 					<!--<button @click="editStrategy" class="edit-button secondary">
 						Edit Strategy
 					</button>-->
-					<button @click="shareResult" class="share-button">
+					<button 
+						@click="shareResult" 
+						class="share-button" 
+						:disabled="[
+							'script_generation_failed', 
+							'validation_failed', 
+							'execution_failed', 
+							'report_generation_failed'
+						].includes(backtest.status)"
+					>
 						Share Results
 					</button>
 				</div>
 			</div>
 			<!-- Show share link if available -->
-			<div v-if="showShareLink" class="share-link-container">
-				<input
-					type="text"
-					:value="shareableLink"
-					readonly
-					class="share-link-input"
-				/>
-				<button
-					@click="navigator.clipboard.writeText(shareableLink)"
-					class="copy-button"
-				>
-					Copy
-				</button>
-			</div>
 			<div class="summary-content">
 				<div class="summary-item">
 					<span class="label">Asset:</span>
@@ -490,6 +485,13 @@ onMounted(fetchResults);
 
 .share-button:hover {
 	transform: translateY(-1px);
+}
+
+.share-button:disabled {
+	background: #e5e7eb;
+	color: #9ca3af;
+	cursor: not-allowed;
+	transform: none;
 }
 
 .share-link-container {

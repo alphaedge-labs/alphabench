@@ -3,6 +3,7 @@ import { onMounted } from "vue";
 import { useAuthStore } from "../stores/auth";
 import { useAppStore } from "../stores/app";
 import { connectWebSocket } from "../ws/client";
+import { storeToRefs } from "pinia";
 
 const authStore = useAuthStore();
 const { fetchUser } = authStore;
@@ -10,16 +11,23 @@ const { fetchUser } = authStore;
 const appStore = useAppStore();
 const { getPastBacktests } = appStore;
 
-onMounted(async () => {
-	let user = await fetchUser();
+const { user } = storeToRefs(authStore);
+const { backtests } = storeToRefs(appStore);
 
-	if (!user) {
-		// fetch user again
-		user = await fetchUser();
+onMounted(async () => {
+	if (!user.value) {
+		let data = await fetchUser();
+
+		if (!data) {
+			data = await fetchUser();
+		}
 	}
 
-	if (user) {
-		connectWebSocket(user.id);
+	if (user.value) {
+		connectWebSocket(user.value.id);
+	}
+
+	if (user.value && !backtests.value.length) {
 		await getPastBacktests();
 	}
 });

@@ -64,6 +64,7 @@ h1 {
 	align-items: center;
 	justify-content: center;
 	gap: 0.5rem;
+	flex-wrap: wrap;
 }
 
 .subtitle {
@@ -141,5 +142,54 @@ button {
 	font-weight: 500;
 	letter-spacing: 0.05em;
 	vertical-align: super;
+}
+
+@media (max-width: 768px) {
+	.home {
+		padding: 1rem;
+		min-height: 70vh;
+	}
+
+	h1 {
+		font-size: 2.5rem;
+	}
+
+	.subtitle {
+		font-size: 1.2rem;
+		margin-bottom: 1.5rem;
+	}
+
+	.cta-buttons {
+		flex-direction: column;
+		gap: 0.8rem;
+	}
+
+	button {
+		width: 100%;
+		padding: 0.7em 1.4em;
+		font-size: 1rem;
+	}
+}
+
+@media (max-width: 480px) {
+	h1 {
+		font-size: 2rem;
+	}
+
+	.beta-label {
+		font-size: 0.8rem;
+		padding: 0.15rem 0.4rem;
+	}
+
+	.legal-links {
+		font-size: 0.8rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.legal-links .separator {
+		display: none;
+	}
 }
 </style>

@@ -1,7 +1,6 @@
 // src/ws/client.js
 import { ref } from "vue";
 import { useAppStore } from "../stores/app";
-// import { generateTrade } from './mock-updates'
 
 const socket = ref(null);
 
@@ -41,12 +40,6 @@ function connectWebSocket(userId) {
 	socket.value.onerror = (error) => {
 		console.error("WebSocket error:", error);
 	};
-
-	// TODO: remove this, this is for testing trades
-	// setInterval(() => {
-	//   let trade = generateTrade()
-	//   addTrade(trade)
-	// }, 2000)
 }
 
 function disconnectWebSocket() {

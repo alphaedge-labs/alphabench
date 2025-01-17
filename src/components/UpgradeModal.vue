@@ -10,46 +10,50 @@
 			</p>
 
 			<div class="plans-slider">
-				<button
-					class="nav-button prev"
-					@click="prevSlide"
+				<button 
+					class="nav-button prev" 
+					@click="prevSlide" 
 					:disabled="currentSlide === 0"
+					aria-label="Previous plan"
 				>
-					‹
+					<img :src="arrowLeft" alt="Previous plan" />
 				</button>
-				<div
-					class="plans-container"
-					:style="{
-						transform: `translateX(-${currentSlide * 100}%)`,
-					}"
-				>
-					<div
-						v-for="(plan, index) in plans"
-						:key="plan.id"
-						class="plan-card"
-					>
-						<h3>{{ plan.name }}</h3>
-						<p class="price">${{ plan.price_usd }}/month</p>
-						<p class="description">{{ plan.description }}</p>
-						<p class="feature">
-							{{ plan.reports_per_day }} reports/day
+				
+				<div class="plans-container" :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
+					<div v-for="(plan, index) in plans" :key="plan.id" class="plan-card">
+						<h3 class="plan-name">{{ plan.name }}</h3>
+						<p class="plan-price">
+							<span class="amount">${{ plan.price_usd }}</span>
+							<span class="period">/month</span>
 						</p>
-
-						<button
-							class="upgrade-button"
+						<p class="plan-description">{{ plan.description }}</p>
+						<p class="plan-feature">
+							<span class="feature-highlight">{{ plan.reports_per_day }}</span> 
+							backtests per day
+						</p>
+						<button 
+							class="subscribe-button"
+							:class="{ primary: plan.name === 'Pro' }"
 							@click="handleSubscribe(plan.id)"
-							:disabled="isLoading"
+							:disabled="isLoading || (user.subscription_plan_id === plan.id) || (!user.subscription_plan_id && plan.name === 'Free')"
 						>
-							{{ isLoading ? "Processing..." : "Choose" }}
+							{{ isLoading ? 'Processing...' : 
+								(user.subscription_plan_id === plan.id) || (!user.subscription_plan_id && plan.name === 'Free') 
+								? 'Active Plan' 
+								: `Choose ${plan.name}` 
+							}}
 						</button>
+						<p v-if="error" class="error-message">{{ error }}</p>
 					</div>
 				</div>
-				<button
-					class="nav-button next"
-					@click="nextSlide"
+				
+				<button 
+					class="nav-button next" 
+					@click="nextSlide" 
 					:disabled="currentSlide === plans.length - 1"
+					aria-label="Next plan"
 				>
-					›
+					<img :src="arrowRight" alt="Next plan" />
 				</button>
 			</div>
 
@@ -69,8 +73,19 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { getPlans, createSubscription } from "../http/app";
+import { 
+	getPlans, 
+	createSubscription, 
+	createRazorpaySubscription, 
+	verifyRazorpayPayment
+} from "../http/app";
+import { initializeRazorpayCheckout } from "../services/razorpay";
 
+import { useAuthStore } from "../stores/auth";
+import { storeToRefs } from "pinia";
+
+import arrowRight from "../assets/arrow-right.svg";
+import arrowLeft from "../assets/arrow-left.svg";
 const props = defineProps({
 	show: Boolean,
 });
@@ -79,6 +94,9 @@ const emit = defineEmits(["close"]);
 const plans = ref([]);
 const isLoading = ref(false);
 const error = ref(null);
+
+const authStore = useAuthStore();
+const { user } = storeToRefs(authStore);
 
 onMounted(async () => {
 	try {
@@ -102,28 +120,47 @@ const handleSubscribe = async (planId) => {
 	error.value = null;
 
 	try {
-		// Here you would typically integrate with a payment provider
-		// to get a payment token before creating the subscription
-		const paymentToken = await handlePayment(planId);
+		// Create subscription on backend
+		const { subscription_id, key_id } = await createRazorpaySubscription(planId);
 
-		await createSubscription(planId, paymentToken);
-		emit("close");
-		// You might want to refresh the user's subscription status here
+		// Initialize Razorpay checkout
+		await initializeRazorpayCheckout({
+			keyId: key_id,
+			subscriptionId: subscription_id,
+			planName: plans.value.find(p => p.id === planId)?.name || 'Pro',
+			onSuccess: async (response) => {
+				try {
+					// Verify payment on backend
+					await verifyRazorpayPayment({
+						razorpay_payment_id: response.razorpay_payment_id,
+						razorpay_subscription_id: response.razorpay_subscription_id,
+						razorpay_signature: response.razorpay_signature
+					});
+
+					// Close modal and refresh user data
+					emit("close");
+					await authStore.fetchUser();
+				} catch (err) {
+					error.value = "Payment verification failed";
+					console.error('Payment verification failed:', err);
+				}
+			},
+			onError: (err) => {
+				error.value = "Payment failed. Please try again.";
+				console.error('Payment failed:', err);
+			}
+		});
+
 	} catch (err) {
-		error.value = "Failed to process subscription";
+		error.value = "Failed to initialize payment";
+		console.error('Failed to initialize payment:', err);
 	} finally {
 		isLoading.value = false;
 	}
 };
 
-const handlePayment = async (planId) => {
-	// Implement payment processing logic here
-	// This would typically involve a payment provider's SDK
-	throw new Error("Payment processing not implemented");
-};
-
 const nextSlide = () => {
-	if (currentSlide.value < plans.length - 1) {
+	if (currentSlide.value < plans.value.length - 1) {
 		currentSlide.value++;
 	}
 };
@@ -149,10 +186,10 @@ const prevSlide = () => {
 
 .modal-content {
 	background: white;
-	padding: 2.5rem;
+	padding: 2rem;
 	border-radius: 1.5rem;
 	max-width: 90%;
-	width: 640px;
+	width: 600px;
 	position: relative;
 	animation: modalEnter 0.3s ease-out;
 }
@@ -209,66 +246,95 @@ const prevSlide = () => {
 .plans-slider {
 	position: relative;
 	overflow: hidden;
-	margin: 0;
-	padding: 0 1rem;
+	margin: 2rem 0;
+	width: 100%;
 }
 
 .plans-container {
 	display: flex;
-	transition: transform 0.3s ease;
+	transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 	width: 100%;
 }
 
 .plan-card {
 	flex: 0 0 100%;
-	padding: 1.5rem;
+	width: 100%;
+	padding: 0.5rem 3rem;
+	border-radius: 1rem;
 	text-align: center;
+	background: white;
 	box-sizing: border-box;
 }
 
-.plan-card h3 {
-	font-size: 1.25rem;
+.plan-name {
+	font-size: 1.5rem;
 	font-weight: 600;
-	margin-bottom: 0.5rem;
+	margin-bottom: 1rem;
+	background: linear-gradient(45deg, #111111, #535bf2);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
 }
 
 .plan-price {
-	font-size: 2rem;
-	font-weight: 700;
-	margin-bottom: 0.5rem;
-	color: #111827;
-}
-
-.plan-description {
-	color: #666;
 	margin-bottom: 1.5rem;
 }
 
-.upgrade-button {
+.plan-price .amount {
+	font-size: 2.25rem;
+	font-weight: 700;
+	color: #111827;
+}
+
+.plan-price .period {
+	font-size: 0.875rem;
+	color: #6b7280;
+}
+
+.plan-description {
+	color: #6b7280;
+	margin-bottom: 1.5rem;
+	font-size: 0.875rem;
+	line-height: 1.5;
+	text-align: left;
+}
+
+.plan-feature {
+	margin-bottom: 2rem;
+	color: #6b7280;
+}
+
+.feature-highlight {
+	font-weight: 600;
+	color: #535bf2;
+}
+
+.subscribe-button {
 	width: 100%;
 	padding: 0.75rem 1.5rem;
 	border-radius: 0.5rem;
 	font-weight: 600;
 	cursor: pointer;
-	transition: all 0.3s ease;
+	transition: all 0.2s;
 	border: 1px solid #535bf2;
 	background: white;
 	color: #535bf2;
 }
 
-.upgrade-button.primary {
+.subscribe-button.primary {
 	background: linear-gradient(45deg, #111111, #535bf2);
 	color: white;
 	border: none;
 }
 
-.upgrade-button:hover {
+.subscribe-button:hover {
 	transform: translateY(-1px);
 }
 
-.upgrade-button:disabled {
+.subscribe-button:disabled {
 	opacity: 0.7;
 	cursor: not-allowed;
+	transform: none;
 }
 
 .slider-dots {
@@ -294,30 +360,32 @@ const prevSlide = () => {
 
 .nav-button {
 	position: absolute;
-	top: 40%;
+	top: 50%;
 	transform: translateY(-50%);
-	background: white;
 	width: 40px;
 	height: 40px;
+	border-radius: 50%;
+	background: white;
+	border: 1px solid #e5e7eb;
+	color: #535bf2;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
-	font-size: 24px;
-	color: #535bf2;
-	z-index: 10;
-	transition: all 0.3s ease;
-	border: none;
+	transition: all 0.2s ease;
+	z-index: 999;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.nav-button:hover {
-	border: none;
-	transform: translateY(-50%) scale(1.1);
+.nav-button:hover:not(:disabled) {
+	background: #f9fafb;
+	color: #111827;
+	transform: translateY(-50%) scale(1.05);
 }
 
 .nav-button:disabled {
-	opacity: 0.5;
-	cursor: not-allowed;
+	opacity: 0;
+	cursor: default;
 }
 
 .nav-button.prev {
@@ -329,19 +397,76 @@ const prevSlide = () => {
 }
 
 @media (max-width: 640px) {
+	.nav-button {
+		display: none;
+	}
+}
+
+@media (max-width: 640px) {
 	.modal-content {
 		padding: 1.5rem;
-		margin: 1rem;
+		max-width: 500px;
+	}
+
+	.modal-title {
+		font-size: 1.25rem;
+	}
+
+	.modal-subtitle {
+		font-size: 0.875rem;
 	}
 
 	.plan-card {
-		padding: 1rem;
+		padding: 1.5rem;
 	}
 
-	.nav-button {
+	.plan-name {
+		font-size: 1.25rem;
+	}
+
+	.plan-price .amount {
+		font-size: 1.875rem;
+	}
+
+	.plan-description {
+		font-size: 0.813rem;
+	}
+
+	.subscribe-button {
+		padding: 0.625rem 1.25rem;
+		font-size: 0.875rem;
+	}
+
+	.close-button {
+		top: 0.5rem;
+		right: 0.5rem;
 		width: 32px;
 		height: 32px;
-		font-size: 20px;
 	}
+}
+
+@media (max-width: 720px) {
+	.modal-content {
+		padding: 1rem;
+		max-width: 500px;
+	}
+}
+
+@media (max-width: 560px) {
+	.modal-content {
+		padding: 1rem;
+		max-width: 300px;
+	}
+
+	.plan-card {
+		padding: 0.5rem;
+	}
+}
+
+.error-message {
+	color: #ef4444;
+	font-size: 0.875rem;
+	margin-top: 0.5rem;
+	text-align: center;
 }
 </style>

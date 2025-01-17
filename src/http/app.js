@@ -1,8 +1,13 @@
 import client from "./client";
 
 export const getCurrentUser = async () => {
-	const response = await client.get("/v1/users/me");
-	return response.data;
+	try {
+		const response = await client.get("/v1/users/me");
+		return response.data;
+	} catch (err) {
+		console.error('Failed to fetch user:', err);
+		throw err;
+	}
 };
 
 export const createBacktest = async (backtestData) => {
@@ -72,5 +77,22 @@ export const getBacktestReportById = async (id) => {
 
 export const searchBacktests = async (query) => {
 	const response = await client.get(`/v1/backtests/past/search?q=${encodeURIComponent(query)}`);
+	return response.data;
+};
+
+export const getShareableLink = async (id) => {
+	const response = await client.get(`/v1/backtests/${id}/share`);
+	return response.data;
+};
+
+export const createRazorpaySubscription = async (planId) => {
+	const response = await client.post("/v1/razorpay/create-subscription", {
+		plan_id: planId,
+	});
+	return response.data;
+};
+
+export const verifyRazorpayPayment = async (paymentData) => {
+	const response = await client.post("/v1/razorpay/verify-payment", paymentData);
 	return response.data;
 };

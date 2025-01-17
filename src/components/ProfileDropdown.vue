@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
+import { useAuthStore } from "../stores/auth";
 
 import pencilIcon from "../assets/write-pencil.svg";
 import newChatIcon from "../assets/new-chat.svg";
@@ -8,18 +10,20 @@ import userIconDefault from "../assets/user_default.jpg";
 import UpgradeModal from "./UpgradeModal.vue";
 
 const route = useRoute();
+const router = useRouter();
+const authStore = useAuthStore();
+const { user } = storeToRefs(authStore);
+
 const isOpen = ref(false);
 const showUpgradeModal = ref(false);
 
-// Dummy user data (replace with your actual user data)
-const user = {
-	name: "John Doe",
-	plan: "Pro Plan",
+const handleLogout = () => {
+	authStore.logout();
+	router.push('/auth/login');
 };
 
-const handleLogout = () => {
-	// Implement logout logic
-	console.log("Logging out...");
+const handleLogin = () => {
+	router.push('/auth/login');
 };
 </script>
 
@@ -34,15 +38,23 @@ const handleLogout = () => {
 			<img :src="newChatIcon" alt="New Chat" />
 		</router-link>
 
-		<div class="profile-dropdown">
-			<button class="profile-icon" @click="isOpen = !isOpen" disabled>
+		<button 
+			v-if="user && !user.email" 
+			@click="handleLogin" 
+			class="login-button"
+		>
+			Login
+		</button>
+
+		<div v-else class="profile-dropdown">
+			<button class="profile-icon" @click="isOpen = !isOpen">
 				<img :src="userIconDefault" alt="Profile" />
 			</button>
 
 			<div v-if="isOpen" class="dropdown-menu">
 				<div class="user-info">
-					<h4>{{ user.name }}</h4>
-					<span class="plan-badge">{{ user.plan }}</span>
+					<h4>{{ user?.name }}</h4>
+					<span class="plan-badge">{{ user?.plan || 'Free Plan' }}</span>
 				</div>
 				<div class="dropdown-divider"></div>
 				<router-link to="/app/profile" class="dropdown-item">
@@ -232,5 +244,22 @@ const handleLogout = () => {
 .logout:hover {
 	background: #fef2f2;
 	color: #dc2626;
+}
+
+.login-button {
+	position: relative;
+	padding: 0.5rem 1.5rem;
+	background: linear-gradient(45deg, #111111, #535bf2);
+	color: white;
+	border: none;
+	border-radius: 0.5rem;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.login-button:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+		0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 </style>

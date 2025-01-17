@@ -13,6 +13,11 @@ client.interceptors.request.use((config) => {
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`;
 	}
+
+	config.headers['User-Agent'] = navigator.userAgent;
+	config.headers['X-Client-Language'] = navigator.language;
+	config.headers['X-Client-Timezone'] = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	
 	return config;
 });
 
