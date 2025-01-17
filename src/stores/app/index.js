@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import initialState from "./intialState";
 import { format } from "date-fns";
 
-import { getBacktest, getPastBacktests, getBacktestReportById, searchBacktests } from "../../http/app";
+import { getBacktest, getPastBacktests, getBacktestReportById, searchBacktests, getShareableLink } from "../../http/app";
 
 export const useAppStore = defineStore("app", {
 	persist: true,
@@ -50,6 +50,10 @@ export const useAppStore = defineStore("app", {
 		},
 		async searchPastBacktests(query) {
 			const data = await searchBacktests(query);
+			return data;
+		},
+		async getShareLink(id) {
+			const data = await getShareableLink(id);
 			return data;
 		},
 	},

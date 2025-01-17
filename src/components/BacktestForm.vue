@@ -111,7 +111,7 @@ const uuid = ref("");
 const notification = ref(null);
 const showAssetInfo = ref(false);
 const showStrategyInfo = ref(false);
-const showUpgradeModal = ref(false);
+const showUpgradeModal = ref(true);
 
 const appStore = useAppStore();
 const { pushToBacktestHistory } = appStore;
@@ -316,7 +316,8 @@ onMounted(() => {
 }
 
 .submit-button:disabled {
-	background: #C7CFDA;
+	background: #e5e7eb;
+	color: #9ca3af;
 	cursor: not-allowed;
 	transform: none;
 }

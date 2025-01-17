@@ -50,16 +50,26 @@ export const useAuthStore = defineStore("auth", {
 			}
 		},
 		async fetchUser() {
-			const data = await getCurrentUser();
-			this.user = data;
-
-			if (data) {
+			try {
+			  const data = await getCurrentUser();
+	  
+			  if (data) {
+				this.user = data;
+	  
 				tracker.setUserID(data.id);
 				tracker.setMetadata("email", data.email);
 				tracker.setMetadata("name", data.name);
+			  
+				return data;
+			  }
+			} catch (err) {
+			  // Don't throw error for 401 (unauthorized)
+			  if (err.response?.status !== 401) {
+				console.error('Failed to fetch user:', err);
+				throw err;
+			  }
+			  return null;
 			}
-
-			return data;
 		},
 		logout() {
 			this.token = null;

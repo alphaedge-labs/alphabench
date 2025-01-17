@@ -81,7 +81,7 @@ const routes = [
 				component: () => import("../views/app/Main.vue")
 			},
 			{
-				path: "results/:id",
+				path: "/results/:id",
 				name: "results",
 				component: () => import("../views/app/Results.vue"),
 				meta: { title: "Results | alphabench" }
