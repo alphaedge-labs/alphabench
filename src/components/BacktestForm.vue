@@ -63,7 +63,7 @@
 
 					<button
 						type="submit"
-						:disabled="isLoading"
+						:disabled="isLoading || !isFormValid"
 						class="submit-button"
 					>
 						{{ isLoading ? "Submitting..." : "Submit" }}
@@ -123,6 +123,15 @@ const formData = reactive({
 	},
 	asset: null,
 	strategy: "",
+});
+
+const isFormValid = computed(() => {
+  return (
+    formData.asset && // Check if asset is selected
+    formData.strategy.trim() !== '' && // Check if strategy has content
+    formData.dateRange.start && 
+    formData.dateRange.end
+  );
 });
 
 const handleSubmit = async () => {
@@ -307,8 +316,9 @@ onMounted(() => {
 }
 
 .submit-button:disabled {
-	background: #94a3b8;
+	background: #C7CFDA;
 	cursor: not-allowed;
+	transform: none;
 }
 
 .alert {
