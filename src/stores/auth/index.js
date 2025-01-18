@@ -29,7 +29,7 @@ export const useAuthStore = defineStore("auth", {
 				googleAuthUrl.searchParams.append('client_id', GOOGLE_CLIENT_ID);
 				googleAuthUrl.searchParams.append('redirect_uri', GOOGLE_REDIRECT_URI);
 				googleAuthUrl.searchParams.append('response_type', 'code');
-				googleAuthUrl.searchParams.append('scope', 'email profile');
+				googleAuthUrl.searchParams.append('scope', 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid');
 				googleAuthUrl.searchParams.append('state', state);
 				
 				// Redirect to Google login

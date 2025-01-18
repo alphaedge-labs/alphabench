@@ -38,7 +38,7 @@ const signupWithGoogle = async () => {
 	<div class="signup-page">
 		<div class="signup-container">
 			<h1>Signup</h1>
-			<p class="subtitle">Please enter your details</p>
+			<p class="subtitle">Use your Google account to continue</p>
 
 			<div class="social-signup">
 				<button @click="signupWithGoogle" class="google-signup-btn">
@@ -47,11 +47,11 @@ const signupWithGoogle = async () => {
 				</button>
 			</div>
 
-			<div class="divider">
+			<!-- <div class="divider">
 				<span>or</span>
-			</div>
+			</div> -->
 
-			<form @submit.prevent="signup">
+			<!-- <form @submit.prevent="signup">
 				<div class="form-group">
 					<label for="email">Name</label>
 					<input
@@ -83,7 +83,7 @@ const signupWithGoogle = async () => {
 					/>
 				</div>
 				<button type="submit" class="primary-btn">Sign up</button>
-			</form>
+			</form> -->
 
 			<p class="signup-link">
 				Already have an account?
@@ -106,6 +106,7 @@ const signupWithGoogle = async () => {
 	border-radius: 1rem;
 	width: 100%;
 	background-color: #f9fafb;
+	max-width: 400px;
 }
 
 h1 {
@@ -179,6 +180,7 @@ input:focus {
 	align-items: center;
 	justify-content: center;
 	gap: 0.5rem;
+	margin: 1rem 0;
 }
 
 .google-signup-btn img {
@@ -222,6 +224,7 @@ input:focus {
 	text-align: center;
 	font-size: 0.875rem;
 	color: #6b7280;
+	margin-top: 1rem;
 }
 
 .signup-link a {

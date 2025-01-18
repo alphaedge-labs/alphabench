@@ -37,7 +37,7 @@ const loginWithGoogle = async () => {
 	<div class="login-page">
 		<div class="login-container">
 			<h1>Login</h1>
-			<p class="subtitle">Please enter your details</p>
+			<p class="subtitle">Use your Google account to continue</p>
 
 			<div class="social-login">
 				<button @click="loginWithGoogle" class="google-login-btn">
@@ -46,11 +46,11 @@ const loginWithGoogle = async () => {
 				</button>
 			</div>
 
-			<div class="divider">
+			<!-- <div class="divider">
 				<span>or</span>
-			</div>
+			</div> -->
 
-			<form @submit.prevent="login">
+			<!--<form @submit.prevent="login">
 				<div class="form-group">
 					<label for="email">Email</label>
 					<input
@@ -72,7 +72,7 @@ const loginWithGoogle = async () => {
 					/>
 				</div>
 				<button type="submit" class="primary-btn">Sign in</button>
-			</form>
+			</form> -->
 
 			<p class="signup-link">
 				Don't have an account?
@@ -94,6 +94,7 @@ const loginWithGoogle = async () => {
 	padding: 2.5rem;
 	border-radius: 1rem;
 	width: 100%;
+	max-width: 400px;
 	background-color: #f9fafb;
 }
 
@@ -168,6 +169,7 @@ input:focus {
 	align-items: center;
 	justify-content: center;
 	gap: 0.5rem;
+	margin: 1rem 0;
 }
 
 .google-login-btn img {
@@ -211,6 +213,7 @@ input:focus {
 	text-align: center;
 	font-size: 0.875rem;
 	color: #6b7280;
+	margin-top: 1rem
 }
 
 .signup-link a {
