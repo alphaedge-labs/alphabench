@@ -12,6 +12,7 @@ const feedback = ref("");
 const feedbackStatus = ref("");
 
 const authStore = useAuthStore();
+const { fetchUser } = authStore;
 const { user } = storeToRefs(authStore);
 
 const subscription = ref(null);
@@ -20,7 +21,8 @@ const isLoading = ref(true);
 
 onMounted(async () => {
 	try {
-		const [subData, backtestData] = await Promise.all([
+		const [userData, subData, backtestData] = await Promise.all([
+			fetchUser(),
 			getActiveSubscription(),
 			getBacktests(),
 		]);
@@ -64,13 +66,13 @@ onMounted(async () => {
 						</div>
 						<div class="info-item">
 							<span class="label">Total Backtests</span>
-							<span class="value">{{ user.backtestsRun }}</span>
+							<span class="value">{{ backtests.length }}</span>
 						</div>
 						<div class="info-item no-bg">
 							<span class="label">Current Plan</span>
 							<span class="value plan-badge">{{
-								user.plan
-							}}</span>
+								subscription.plan.name
+							}} Plan</span>
 						</div>
 					</div>
 					<!--<div
