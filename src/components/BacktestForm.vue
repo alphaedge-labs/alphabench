@@ -111,7 +111,7 @@ const uuid = ref("");
 const notification = ref(null);
 const showAssetInfo = ref(false);
 const showStrategyInfo = ref(false);
-const showUpgradeModal = ref(true);
+const showUpgradeModal = ref(false);
 
 const appStore = useAppStore();
 const { pushToBacktestHistory } = appStore;
