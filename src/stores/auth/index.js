@@ -1,4 +1,6 @@
 import { defineStore } from "pinia";
+import { format } from "date-fns";
+
 import initialState from "./initialState";
 
 import { googleLogin } from "../../http/auth";
@@ -55,7 +57,9 @@ export const useAuthStore = defineStore("auth", {
 	  
 			  if (data) {
 				this.user = data;
-	  
+
+				this.user.joinDate = format(new Date(data.created_at), 'dd MMM yyyy');
+
 				tracker.setUserID(data.id);
 				tracker.setMetadata("email", data.email);
 				tracker.setMetadata("name", data.name);
