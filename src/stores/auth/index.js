@@ -60,10 +60,15 @@ export const useAuthStore = defineStore("auth", {
 
 				this.user.joinDate = format(new Date(data.created_at), 'dd MMM yyyy');
 
-				tracker.setUserID(data.id);
-				tracker.setMetadata("email", data.email);
-				tracker.setMetadata("name", data.name);
-			  
+				tracker.start({
+					userID: data.id,
+					metadata: {
+						email: data.email,
+						name: data.name,
+					},
+					forceNew: true
+				})
+
 				return data;
 			  }
 			} catch (err) {

@@ -11,6 +11,7 @@ const router = useRouter();
 const resultContent = ref("");
 const isLoading = ref(true);
 const error = ref(null);
+const belongsToUser = ref(false);
 const formDetails = ref(null);
 const shareableLink = ref("");
 
@@ -31,6 +32,10 @@ const fetchResults = async () => {
 
 		const backtestId = route.params.id;
 		const backtestData = await getBacktestById(backtestId);
+
+		if (backtestData.user_id === user.value.id) {
+			belongsToUser.value = true;
+		}
 
 		if (backtestData.report_url) {
 			const response = await getBacktestReport(backtestId);
@@ -73,9 +78,9 @@ const shareResult = async () => {
 		if (!response) {
 			throw new Error("Failed to generate share link");
 		}
-		shareableLink.value = response.shareUrl;
-		await navigator.clipboard.writeText(shareableLink.value);
-		alert("Link copied to clipboard");
+		shareableLink.value = response.share_url;
+		await navigator.clipboard.writeText(response.share_text);
+		alert("This backtest link is copied to clipboard and ready to share!");
 	} catch (err) {
 		error.value = err.message;
 	}
@@ -130,13 +135,17 @@ onMounted(fetchResults);
 					<h3>Strategy Details</h3>
 				</div>
 				<div class="button-wrapper" v-if="backtest.user_id === user.id">
-					<!--<button @click="editStrategy" class="edit-button secondary">
+					<!--<button 
+						@click="editStrategy" 
+						v-if="!belongsToUser"
+						class="edit-button secondary"
+					>
 						Edit Strategy
 					</button>-->
 					<button 
 						@click="shareResult" 
 						class="share-button" 
-						:disabled="[
+						:disabled="!backtest.report_url || [
 							'script_generation_failed', 
 							'validation_failed', 
 							'execution_failed', 
@@ -392,7 +401,7 @@ onMounted(fetchResults);
 	border-radius: 0.5rem;
 	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 	padding: 1.5rem;
-	margin-top: 2rem;
+	margin-top: 4rem;
 	margin-bottom: 2rem;
 }
 
@@ -728,6 +737,52 @@ onMounted(fetchResults);
 @media (max-width: 480px) {
 	.loading-timeline {
 		width: 360px;
+	}
+}
+@media (max-width: 320px) {
+	.loading-timeline {
+		width: 320px;
+	}
+
+	.results-container {
+		padding: 1rem;
+		max-width: 100%;
+	}
+
+	.header {
+		padding: 0.5rem;
+	}
+
+	.summary-card {
+		width: 280px;
+		padding: 1rem;
+	}
+
+	.summary-header {
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.button-wrapper {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.markdown-content {
+		padding: 0.5rem;
+	}
+
+	:deep(.markdown-content pre) {
+		max-width: 100%;
+		overflow-x: scroll;
+	}
+
+	:deep(.markdown-content table) {
+		display: block;
+		overflow-x: auto;
+		white-space: nowrap;
 	}
 }
 </style>

@@ -103,7 +103,7 @@ import { createBacktest } from "../http/app";
 
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../stores/app";
-
+import { useAuthStore } from "../stores/auth";
 const router = useRouter();
 const isLoading = ref(false);
 const progress = ref(0);
@@ -115,6 +115,9 @@ const showUpgradeModal = ref(false);
 
 const appStore = useAppStore();
 const { pushToBacktestHistory } = appStore;
+
+const authStore = useAuthStore();
+const { logout } = authStore;
 
 const formData = reactive({
 	dateRange: {
@@ -167,7 +170,14 @@ const handleSubmit = async () => {
 				message:
 					"Daily backtest limit reached. Please upgrade your plan for more tests.",
 			};
-		} else {
+		}
+		else if (error.response?.status === 401) {
+			notification.value = {
+				type: "error",
+				message: "You are not authorized to perform this action. Redirecting to login ...",
+			};
+		}
+		else {
 			notification.value = {
 				type: "error",
 				message:
