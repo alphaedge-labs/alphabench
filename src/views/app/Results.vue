@@ -14,6 +14,7 @@ const error = ref(null);
 const belongsToUser = ref(false);
 const formDetails = ref(null);
 const shareableLink = ref("");
+const isSharing = ref(false);
 
 import { storeToRefs } from "pinia";
 import { useAppStore } from "../../stores/app";
@@ -74,6 +75,7 @@ const editStrategy = () => {
 
 const shareResult = async () => {
 	try {
+		isSharing.value = true;
 		const response = await getShareLink(route.params.id);
 		if (!response) {
 			throw new Error("Failed to generate share link");
@@ -82,7 +84,10 @@ const shareResult = async () => {
 		await navigator.clipboard.writeText(response.share_text);
 		alert("This backtest link is copied to clipboard and ready to share!");
 	} catch (err) {
-		error.value = err.message;
+		// error.value = err.message;
+		// handled in openreplay
+	} finally {
+		isSharing.value = false;
 	}
 };
 
@@ -145,14 +150,14 @@ onMounted(fetchResults);
 					<button 
 						@click="shareResult" 
 						class="share-button" 
-						:disabled="!backtest.report_url || [
+						:disabled="isSharing || !backtest.report_url || [
 							'script_generation_failed', 
 							'validation_failed', 
 							'execution_failed', 
 							'report_generation_failed'
 						].includes(backtest.status)"
 					>
-						Share Results
+						{{ isSharing ? 'Loading...' : 'Share Results' }}
 					</button>
 				</div>
 			</div>
