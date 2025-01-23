@@ -6,7 +6,7 @@
 		/>
 		<div v-else class="card">
 			<header class="card-header">
-				<h2>What would you like to test today?</h2>
+                <h2 style="text-rendering: optimizeLegibility;">What would you like to test today?</h2>
 			</header>
 			<div class="card-content">
 				<div v-if="notification" :class="['alert', notification.type]">
@@ -219,6 +219,10 @@ onMounted(() => {
 	border-radius: 0.5rem;
 	margin: 0 auto;
 	padding: 0;
+}
+
+.card-header h2 {
+    font-display: swap;
 }
 
 .card-content {
