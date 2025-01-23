@@ -1,4 +1,11 @@
 <script setup>
+const props = defineProps({
+	fixed: {
+		type: Boolean,
+		default: true,
+	},
+});
+
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
@@ -28,7 +35,7 @@ const handleLogin = () => {
 </script>
 
 <template>
-	<div class="profile-section">
+	<div :class="props.fixed ? 'profile-section' : 'profile-section-nonfixed'">
 		<router-link
 			v-if="route.path !== '/app'"
 			to="/app"
@@ -117,6 +124,12 @@ const handleLogin = () => {
 	right: 2rem;
 	top: 1rem;
 	z-index: 1000;
+}
+
+.profile-section-nonfixed {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
 }
 
 .app-icon {
@@ -249,17 +262,16 @@ const handleLogin = () => {
 .login-button {
 	position: relative;
 	padding: 0.5rem 1.5rem;
-	background: linear-gradient(45deg, #111111, #535bf2);
-	color: white;
-	border: none;
+	color: #535bf2;
+	border: 2px solid #535bf2;
 	border-radius: 0.5rem;
 	cursor: pointer;
 	transition: all 0.2s ease;
 }
 
 .login-button:hover {
+	border-color: #111111;
+	color: #111111;
 	transform: translateY(-1px);
-	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-		0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 </style>

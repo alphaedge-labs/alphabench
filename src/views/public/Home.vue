@@ -6,6 +6,13 @@ const router = useRouter();
 const navigateToApp = () => {
 	router.push("/app");
 };
+
+// Add this constant for the demo URL
+const demoUrl = "https://www.youtube.com/@alphabench";
+
+const openDemo = () => {
+  window.open(demoUrl, '_blank');
+};
 </script>
 
 <template>
@@ -23,6 +30,9 @@ const navigateToApp = () => {
 				<!--<button class="secondary-btn" @click="router.push('/how-to')">
 					How-to
 				</button>-->
+				<button class="secondary-btn" @click="openDemo">
+					View Demo
+				</button>
 				<button class="primary-btn" @click="navigateToApp">
 					Get Started for Free
 				</button>
@@ -37,6 +47,20 @@ const navigateToApp = () => {
 			<a @click="router.push('/pricing')">Pricing</a>
 		</div>
 	</div>
+    <component :is="'script'" type="application/ld+json">
+      {
+		"@context": "https://schema.org",
+		"@type": "SoftwareApplication",
+		"name": "alphabench",
+		"applicationCategory": "FinanceApplication",
+		"description": "Test your trading strategies in natural language",
+		"offers": {
+			"@type": "Offer",
+			"price": "0",
+			"priceCurrency": "USD"
+		}
+	}
+    </component>
 </template>
 
 <style scoped>
@@ -106,8 +130,9 @@ button {
 }
 
 .secondary-btn:hover {
-	background: rgba(100, 108, 255, 0.1);
-	transform: translateY(-2px);
+	border-color: #111111;
+	color: #111111;
+	transform: translateY(-1px);
 }
 
 .legal-links {

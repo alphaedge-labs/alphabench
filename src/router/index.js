@@ -8,6 +8,8 @@ import AppLayout from "../layouts/AppLayout.vue";
 
 import NotFound from "../views/NotFound.vue";
 
+import { updateMetaTags } from "../utils/metaTags";
+
 // Routes
 const routes = [
 	{
@@ -123,6 +125,7 @@ router.beforeEach((to, from, next) => {
 	// Set document title from route meta first
 	document.title = to.meta.title || import.meta.env.VITE_APP_DEFAULT_TITLE;
 
+    updateMetaTags(to);
 	if (to.meta.requiresAuth && !authStore.isAuthenticated) {
 		next({ name: "login", query: { redirect: to.fullPath } });
 	} else if (authStore.isAuthenticated && to.path.startsWith("/auth/")) {
