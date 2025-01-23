@@ -40,11 +40,11 @@ const openDemo = () => {
 		</div>
 
 		<div class="legal-links">
-			<a @click="router.push('/terms')">Terms</a>
+			<router-link to="/terms">Terms</router-link>
 			<span class="separator">•</span>
-			<a @click="router.push('/privacy-policy')">Privacy Policy</a>
+			<router-link to="/privacy-policy">Privacy Policy</router-link>
 			<span class="separator">•</span>
-			<a @click="router.push('/pricing')">Pricing</a>
+			<router-link to="/pricing">Pricing</router-link>
 		</div>
 	</div>
     <component :is="'script'" type="application/ld+json">
