@@ -100,7 +100,9 @@ onBeforeRouteUpdate((to, from, next) => {
   error.value = null;
   formDetails.value = null;
   shareableLink.value = "";
-  
+  belongsToUser.value = false;
+  backtest.value = null;
+
   next();
   // Call fetchResults after the navigation is confirmed
   nextTick(() => fetchResults());
