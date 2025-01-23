@@ -119,6 +119,7 @@ const currentDate = new Date().toLocaleDateString();
 .terms-container {
 	max-width: 1200px;
 	padding: 1rem 1rem;
+    padding-top: 4rem;
 }
 
 .terms-card {

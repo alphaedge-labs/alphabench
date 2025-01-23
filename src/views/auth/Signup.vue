@@ -36,6 +36,7 @@ const signupWithGoogle = async () => {
 
 <template>
 	<div class="signup-page">
+		<router-link class="back-link" @click="$router.go(-1)">&larr; Back</router-link>
 		<div class="signup-container">
 			<h1>Signup</h1>
 			<p class="subtitle">Use your Google account to continue</p>
@@ -104,9 +105,8 @@ const signupWithGoogle = async () => {
 .signup-container {
 	padding: 2.5rem;
 	border-radius: 1rem;
-	width: 100%;
 	background-color: #f9fafb;
-	max-width: 400px;
+	width: 350px;
 }
 
 h1 {
@@ -235,5 +235,19 @@ input:focus {
 
 .signup-link a:hover {
 	text-decoration: underline;
+}
+
+.back-link {
+	position: absolute;
+	top: 2rem;
+	left: 2rem;
+	color: #535bf2;
+	text-decoration: none;
+	cursor: pointer;
+	transition: color 0.3s ease;
+}
+
+.back-link:hover {
+	color: #111111;
 }
 </style>

@@ -446,6 +446,7 @@ watch(searchQuery, (newQuery) => {
 	padding: 0.25rem 0.5rem;
 	border-radius: 4px;
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    margin: 0 0 0 5px;
 }
 
 /* Add media query for mobile responsiveness */

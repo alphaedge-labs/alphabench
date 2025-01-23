@@ -62,10 +62,10 @@ const results = ref([])
 const searchSnippets = [
   "What's the best stock to buy today?",
   "Top performing ETFs this week",
-  "Crypto market analysis this month",
+  "Pharma sector analysis this month",
   "Investment strategies for beginners",
   "Market trends this week",
-  "Best dividend stocks this month"
+  "Best performing stocks this month"
 ]
 
 const applySnippet = (snippet) => {
