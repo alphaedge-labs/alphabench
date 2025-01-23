@@ -16,7 +16,7 @@ export function updateMetaTags(to) {
   
 	// Update meta tags
 	document.title = meta.title;
-	const descriptionMeta = document.querySelector('meta[name="og:description"]');
+	const descriptionMeta = document.querySelector('meta[name="description"]');
     if (descriptionMeta) {
         descriptionMeta.setAttribute("content", meta.description);
     }
