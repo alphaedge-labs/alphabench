@@ -136,7 +136,7 @@ onMounted(fetchResults);
 		</div>
 		<HamburgerMenu />
 		<!-- Form Details Summary Card -->
-		<div v-if="formDetails && !error" class="summary-card">
+		<div v-if="formDetails && !isLoading" class="summary-card">
 			<div class="summary-header">
 				<div class="title-share-wrapper">
 					<h3>Strategy Details</h3>
@@ -410,6 +410,7 @@ onMounted(fetchResults);
 	padding: 1.5rem;
 	margin-top: 4rem;
 	margin-bottom: 2rem;
+    width: 100%;
 }
 
 .summary-header {
