@@ -15,20 +15,32 @@ const { user } = storeToRefs(authStore);
 const { backtests } = storeToRefs(appStore);
 
 onMounted(async () => {
-	if (!user.value) {
-		let data = await fetchUser();
+	try {
+		// Only attempt to fetch user if not already present
+		if (!user.value) {
+			let data = await fetchUser();
+			
+			// If first attempt fails with 401, try one more time to handle anonymous users
+			if (!data) {
+				data = await fetchUser();
+			}
 
-		if (!data) {
-			data = await fetchUser();
+			if (!data) {
+				throw new Error('Failed to fetch user data');
+			}
 		}
-	}
 
-	if (user.value) {
-		connectWebSocket(user.value.id);
-	}
-
-	if (user.value && !backtests.value.length) {
-		await getPastBacktests();
+		// These operations can run in parallel once we have the user
+		if (user.value) {
+			await Promise.all([
+				connectWebSocket(user.value.id),
+				// Only fetch backtests if array is empty
+				backtests.value.length === 0 ? getPastBacktests() : Promise.resolve()
+			]);
+		}
+	} catch (error) {
+		console.error('Error in AppLayout setup:', error);
+		// Handle error appropriately (e.g., show notification to user)
 	}
 });
 </script>
