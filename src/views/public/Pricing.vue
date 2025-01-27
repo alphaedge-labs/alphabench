@@ -8,7 +8,7 @@
 				</router-link>
 				
 				<div class="nav-links">
-					<router-link to="/howto">How to Use</router-link>
+					<router-link to="/how-to">How to Use</router-link>
 					<router-link to="/pricing">Pricing</router-link>
 					<router-link to="/terms">Terms</router-link>
 				</div>

@@ -23,7 +23,7 @@ const routes = [
 				component: () => import("../views/public/Home.vue"),
 			},
 			{
-				path: "howto",
+				path: "how-to",
 				name: "how to use",
 				meta: { title: "How to use | alphabench" },
 				component: () => import("../views/public/HowTo.vue"),
@@ -92,12 +92,7 @@ const routes = [
 				path: "profile",
 				name: "profile",
 				component: () => import("../views/app/Profile.vue")
-			},
-			{
-				path: "search",
-				name: "search",
-				component: () => import("../views/app/ProSearch.vue")
-			},
+			}
 			// Add more protected routes here
 		],
 	},
