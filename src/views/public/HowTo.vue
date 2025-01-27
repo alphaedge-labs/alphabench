@@ -1,22 +1,6 @@
 <template>
   <div class="how-to-container">
-    <button class="back-button" @click="$router.back()">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <line x1="19" y1="12" x2="5" y2="12"></line>
-        <polyline points="12 19 5 12 12 5"></polyline>
-      </svg>
-      Back
-    </button>
+	<router-link class="back-link" @click="$router.go(-1)">&larr; Back</router-link>
 
     <article class="how-to-content">
       <h1>Understanding Our Platform</h1>
@@ -114,24 +98,19 @@
   padding-top: 6rem;
 }
 
-.back-button {
-  position: fixed;
-  top: 1rem;
-  left: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: none;
-  border: none;
-  color: #374151;
-  cursor: pointer;
-  transition: color 0.2s ease;
-  font-size: 1rem;
+
+.back-link {
+	position: absolute;
+	top: 2rem;
+	left: 2rem;
+	color: #535bf2;
+	text-decoration: none;
+	cursor: pointer;
+	transition: color 0.3s ease;
 }
 
-.back-button:hover {
-  color: #535bf2;
+.back-link:hover {
+	color: #111111;
 }
 
 .how-to-content {

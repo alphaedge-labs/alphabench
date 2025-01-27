@@ -90,6 +90,7 @@ h1 {
 	justify-content: center;
 	gap: 0.5rem;
 	flex-wrap: wrap;
+    cursor: pointer;
 }
 
 .subtitle {
@@ -168,6 +169,7 @@ button {
 	font-weight: 500;
 	letter-spacing: 0.05em;
 	vertical-align: super;
+    cursor: pointer;
 }
 
 @media (max-width: 768px) {

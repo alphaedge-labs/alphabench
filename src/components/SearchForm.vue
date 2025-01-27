@@ -127,7 +127,7 @@
 			/>
 		</div>
 
-		<div v-else class="loading-bar">
+		<div v-if="isLoading" class="loading-bar">
 			<div class="loading-progress"></div>
 		</div>
 	</div>
@@ -500,12 +500,18 @@ const handleSearch = async () => {
 }
 
 .loading-bar {
-	width: 100%;
+	width: 300px;
 	height: 4px;
 	background: #f3f4f6;
 	border-radius: 2px;
 	overflow: hidden;
 	margin: 1rem 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    margin: auto;
 }
 
 .loading-progress {
@@ -513,6 +519,7 @@ const handleSearch = async () => {
 	height: 100%;
 	background: linear-gradient(45deg, #111111, #535bf2);
 	border-radius: 2px;
+	position: absolute;
 	animation: loading 1.5s infinite ease-in-out;
 }
 
