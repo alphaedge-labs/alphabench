@@ -131,6 +131,10 @@ onMounted(fetchResults);
 
 <template>
 	<div class="results-container">
+		<h1 class="logo">
+			alphabench
+			<span class="beta-label">preview</span>
+		</h1>
 		<div class="header">
 			<ProfileDropdown />
 		</div>
@@ -291,6 +295,32 @@ onMounted(fetchResults);
 </template>
 
 <style scoped>
+.logo {
+	position: absolute;
+	top: 1.5rem;
+	left: 50%;
+	transform: translateX(-50%);
+	font-size: 1.5rem;
+	background: linear-gradient(45deg, #111111, #535bf2);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	margin: 0;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.beta-label {
+	font-size: 0.8rem;
+	background: linear-gradient(45deg, #111111, #535bf2);
+	padding: 0.2rem 0.5rem;
+	border-radius: 4px;
+	color: white;
+	-webkit-text-fill-color: white;
+	font-weight: 500;
+	letter-spacing: 0.05em;
+}
+
 .header {
 	position: absolute;
 	top: 1rem;
@@ -741,10 +771,30 @@ onMounted(fetchResults);
 	.timeline {
 		padding: 1rem 0;
 	}
+
+	.logo {
+		font-size: 1.2rem;
+	}
+
+	.beta-label {
+		font-size: 0.7rem;
+	}
 }
 @media (max-width: 480px) {
 	.loading-timeline {
 		width: 360px;
+	}
+
+	.logo {
+		top: 1rem;
+		font-size: 1rem;
+		flex-direction: column;
+		gap: 0.2rem;
+	}
+
+	.beta-label {
+		font-size: 0.6rem;
+		padding: 0.15rem 0.4rem;
 	}
 }
 @media (max-width: 320px) {

@@ -149,7 +149,7 @@ onUnmounted(() => {
 	position: relative;
 	display: inline-block;
 	width: 100%;
-	max-width: 350px;
+	max-width: 300px;
 	font-family: system-ui, -apple-system, sans-serif;
 }
 

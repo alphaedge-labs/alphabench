@@ -263,7 +263,7 @@ const handleLogin = () => {
 	position: relative;
 	padding: 0.5rem 1.5rem;
 	color: #535bf2;
-	border: 2px solid #535bf2;
+	border: 1px solid #535bf2;
 	border-radius: 0.5rem;
 	cursor: pointer;
 	transition: all 0.2s ease;
@@ -272,6 +272,5 @@ const handleLogin = () => {
 .login-button:hover {
 	border-color: #111111;
 	color: #111111;
-	transform: translateY(-1px);
 }
 </style>

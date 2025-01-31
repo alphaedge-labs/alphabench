@@ -117,7 +117,7 @@ watch(searchQuery, (newQuery) => {
 		<div class="drawer" :class="{ 'drawer-open': isDrawerOpen }">
 			<div class="drawer-content">
 				<div class="drawer-header">
-					<h3>Past backtests</h3>
+					<h3>Past searches</h3>
 					<button class="close-button" @click="closeDrawer">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"

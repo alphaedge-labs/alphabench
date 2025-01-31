@@ -11,7 +11,7 @@ const navigateToApp = () => {
 const demoUrl = "https://www.youtube.com/@alphabench";
 
 const openDemo = () => {
-  window.open(demoUrl, '_blank');
+	window.open(demoUrl, "_blank");
 };
 </script>
 
@@ -23,7 +23,8 @@ const openDemo = () => {
 				<span class="beta-label">preview</span>
 			</h1>
 			<p class="subtitle">
-				Test your trading strategies in natural language
+				Your personal quantitative research assistant <br />
+				analyzing your portfolio and backtesting strategies.
 			</p>
 
 			<div class="cta-buttons">
@@ -47,20 +48,17 @@ const openDemo = () => {
 			<router-link to="/pricing">Pricing</router-link>
 		</div>
 	</div>
-    <component :is="'script'" type="application/ld+json">
-      {
-		"@context": "https://schema.org",
-		"@type": "SoftwareApplication",
-		"name": "alphabench",
-		"applicationCategory": "FinanceApplication",
-		"description": "Test your trading strategies in natural language",
-		"offers": {
-			"@type": "Offer",
-			"price": "0",
-			"priceCurrency": "USD"
-		}
-	}
-    </component>
+	<component :is="'script'" type="application/ld+json">
+		{ "@context": "https://schema.org", "@type": "WebSite", "name":
+		"alphabench", "url": "https://alphabench.in/", "description": "Test your
+		trading strategies in natural language", "potentialAction": { "@type":
+		"SearchAction", "target":
+		"https://alphabench.in/search?q={search_term_string}", "query-input":
+		"required name=search_term_string" }, "sameAs": [
+		"https://www.youtube.com/@alphabench", "https://www.crunchbase.com/organization/alphabench" ], "applicationCategory":
+		"FinanceApplication", "offers": { "@type": "Offer", "price": "0",
+		"priceCurrency": "USD" } }
+	</component>
 </template>
 
 <style scoped>
@@ -79,7 +77,7 @@ const openDemo = () => {
 }
 
 h1 {
-	font-size: 3.5rem;
+	font-size: 3rem;
 	margin-bottom: 1rem;
 	background: linear-gradient(45deg, #111111, #535bf2);
 	-webkit-background-clip: text;
@@ -89,10 +87,11 @@ h1 {
 	justify-content: center;
 	gap: 0.5rem;
 	flex-wrap: wrap;
+	cursor: pointer;
 }
 
 .subtitle {
-	font-size: 1.5rem;
+	font-size: 1.2rem;
 	color: #666;
 	margin-bottom: 2rem;
 }
@@ -105,7 +104,7 @@ h1 {
 
 button {
 	padding: 0.8em 1.6em;
-	font-size: 1.1rem;
+	font-size: 1rem;
 	border-radius: 8px;
 	cursor: pointer;
 	transition: all 0.3s ease;
@@ -137,7 +136,7 @@ button {
 
 .legal-links {
 	margin-top: 2rem;
-	font-size: 0.9rem;
+	font-size: 0.8rem;
 	color: #666;
 }
 
@@ -158,7 +157,7 @@ button {
 }
 
 .beta-label {
-	font-size: 0.9rem;
+	font-size: 1rem;
 	background: linear-gradient(45deg, #111111, #535bf2);
 	padding: 0.2rem 0.5rem;
 	border-radius: 4px;
@@ -167,6 +166,7 @@ button {
 	font-weight: 500;
 	letter-spacing: 0.05em;
 	vertical-align: super;
+	cursor: pointer;
 }
 
 @media (max-width: 768px) {
@@ -180,7 +180,7 @@ button {
 	}
 
 	.subtitle {
-		font-size: 1.2rem;
+		font-size: 1rem;
 		margin-bottom: 1.5rem;
 	}
 
@@ -198,16 +198,16 @@ button {
 
 @media (max-width: 480px) {
 	h1 {
-		font-size: 2rem;
+		font-size: 1.5rem;
 	}
 
 	.beta-label {
-		font-size: 0.8rem;
+		font-size: 0.6rem;
 		padding: 0.15rem 0.4rem;
 	}
 
 	.legal-links {
-		font-size: 0.8rem;
+		font-size: 0.6rem;
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
