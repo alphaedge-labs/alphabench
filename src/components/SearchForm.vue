@@ -27,12 +27,13 @@
 				<div class="snippets-container">
 					<button
 						v-for="snippet in currentSnippets"
-						:key="snippet"
+						:key="snippet.title"
 						class="snippet-button"
-						@click="applySnippet(snippet)"
+						@click="applySnippet(snippet.text)"
 						:disabled="searchQuery.length > 0"
+						:title="snippet.text"
 					>
-						{{ snippet }}
+						{{ snippet.title }}
 					</button>
 				</div>
 			</Transition>
@@ -42,48 +43,35 @@
 					class="search-input"
 					:placeholder="inputPlaceholder"
 					v-model="searchQuery"
-					@keyup.enter="handleSearch"
 					@input="adjustTextareaHeight"
 					ref="textarea"
 					rows="1"
 				></textarea>
-				<button
-					class="portfolio-button"
-					@click="handlePortfolioAction"
-					type="button"
-				>
-					<svg
-						v-if="!hasPortfolio"
-						xmlns="http://www.w3.org/2000/svg"
-						width="20"
-						height="20"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
+				<div class="portfolio-button-wrapper">
+					<button
+						class="portfolio-button"
+						@click="handlePortfolioAction"
+						type="button"
+						disabled
 					>
-						<line x1="12" y1="5" x2="12" y2="19"></line>
-						<line x1="5" y1="12" x2="19" y2="12"></line>
-					</svg>
-					<svg
-						v-else
-						xmlns="http://www.w3.org/2000/svg"
-						width="20"
-						height="20"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<path d="M3 6h18"></path>
-						<path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-						<path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-					</svg>
-				</button>
+						<svg
+							v-if="!hasPortfolio"
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<line x1="12" y1="5" x2="12" y2="19"></line>
+							<line x1="5" y1="12" x2="19" y2="12"></line>
+						</svg>
+						<span class="tooltip">Backtest on portfolio, coming soon</span>
+					</button>
+				</div>
 				<Transition name="fade">
 					<button
 						v-show="searchQuery"
@@ -141,13 +129,22 @@
 	/>
 
 	<SearchInfoModal :show="showSearchInfo" @close="showSearchInfo = false" />
+	
+	<CustomAlert
+		v-if="error"
+		type="error"
+		:message="error"
+		position="bottom-right"
+		:duration="5000"
+	/>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import PortfolioModal from "./PortfolioModal.vue";
 import PortfolioView from "./PortfolioView.vue";
 import SearchInfoModal from "./SearchInfoModal.vue";
+import CustomAlert from "./CustomAlert.vue";
 
 const searchQuery = ref("");
 const loading = ref(false);
@@ -160,23 +157,41 @@ const isLoading = ref(false);
 const portfolioStocks = ref([]);
 const showSearchInfo = ref(false);
 const textarea = ref(null);
+const error = ref("");
 
-const defaultSnippets = [
-	"What's the best stock to buy today?",
-	"Top performing ETFs this week",
-	"Pharma sector analysis this month",
-	"Market trends this week",
-	"Best performing stocks this month",
+const strategySnippets = [
+	{
+		title: "Simple Moving Average Crossover",
+		text: "Buy when 5-minute moving average crosses above 20-minute moving average, using closing prices. Sell when 5-minute MA crosses below 20-minute MA. Calculate MAs on closing prices only. Exit all positions at end of day",
+	},
+	{
+		title: "Volume Spike",
+		text: "Buy when 14-period RSI drops below 30 using 5-minute intervals and closing prices. Sell when RSI crosses above 70. Stop loss at 1% below entry price. Exit all positions at end of day",
+	},
+	{
+		title: "Double bottom pattern strategy",
+		text: "Buy when double bottom pattern forms (two lows within 0.1% of each other in 30-minute window). Sell when price moves 0.5% above the peak between the two lows. Stop loss at 0.2% below second low",
+	},
+	{
+		title: "Triple EMA Strategy",
+		text: "Buy when 8-period EMA crosses above 13-period EMA and both cross above 21-period EMA. Sell when 8-period EMA crosses below 13-period EMA. Use 15-minute chart. Stop loss at recent swing low.",
+	},
+	{
+		title: "Support/Resistance Breakout",
+		text: "Identify key support/resistance levels from 1-hour chart. Buy on breakout above resistance with volume confirmation. Target: Distance between support and resistance. Stop loss: 50% of that distance.",
+	},
+	{
+		title: "Stochastic RSI Crossover",
+		text: "Buy when Stochastic RSI (%K, 3,3,14,14) crosses above %D while both below 20. Sell when they cross below 80. Use 30-minute chart. Stop loss: 2x Average True Range below entry.",
+	},
+	{
+		title: "Opening Range Breakout",
+		text: "Calculate first hour's high and low. Buy on break above high with volume confirmation. Sell at 2x initial range or if price falls back into range. Stop loss at range low. Only trade first 3 hours."
+	}
 ];
 
-const portfolioSnippets = [
-	"Run backtest on this portfolio for 2020",
-	"Simulate market crash scenario",
-	"Portfolio performance in bear market",
-	"Optimize portfolio allocation",
-	"Compare with S&P 500 performance",
-	"Risk analysis of current portfolio",
-];
+const defaultSnippets = strategySnippets;
+const portfolioSnippets = strategySnippets;
 
 const currentSnippets = computed(() =>
 	hasPortfolio.value ? portfolioSnippets : defaultSnippets
@@ -185,7 +200,7 @@ const currentSnippets = computed(() =>
 const inputPlaceholder = computed(() =>
 	hasPortfolio.value
 		? "Run backtest on this portfolio..."
-		: "Search in stock universe or run a backtest..."
+		: "Search in stock universe and run a backtest..."
 );
 
 const handlePortfolioAction = () => {
@@ -200,6 +215,9 @@ const handlePortfolioAction = () => {
 
 const applySnippet = (snippet) => {
 	searchQuery.value = snippet;
+	setTimeout(() => {
+		adjustTextareaHeight();
+	}, 0);
 };
 
 const addFactor = (factor) => {
@@ -229,16 +247,31 @@ const handleSearch = async () => {
 	if (!searchQuery.value.trim()) return;
 
 	isLoading.value = true;
+	error.value = ""; // Clear any previous errors
+	
 	try {
 		// Simulate API call - replace with actual API call
-		await new Promise((resolve) => setTimeout(resolve, 4000));
+		await new Promise((resolve, reject) => {
+			setTimeout(() => {
+				// Simulate random failure for demo
+				if (Math.random() > 0.5) {
+					reject(new Error("Network error: Failed to fetch search results"));
+				}
+				resolve();
+			}, 4000);
+		});
 		// Handle search result
-	} catch (error) {
-		// Handle error
+	} catch (err) {
+		error.value = err.message || "An unexpected error occurred";
 	} finally {
 		isLoading.value = false;
 	}
 };
+
+onMounted(() => {
+	// Adjust textarea height on initial render
+	adjustTextareaHeight();
+});
 
 const adjustTextareaHeight = () => {
 	const element = textarea.value;
@@ -458,11 +491,12 @@ const adjustTextareaHeight = () => {
 	font-size: 0.875rem;
 	color: #374151;
 	cursor: pointer;
-	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	transition: all 0.2s ease;
 	text-align: left;
 	white-space: nowrap;
 	display: inline-block;
 	max-width: fit-content;
+	position: relative;
 }
 
 .snippet-button:disabled {
@@ -474,6 +508,10 @@ const adjustTextareaHeight = () => {
 .snippet-button:hover {
 	border-color: #2563eb;
 	color: #2563eb;
+}
+
+.portfolio-button-wrapper {
+	position: relative;
 }
 
 .portfolio-button {
@@ -493,6 +531,12 @@ const adjustTextareaHeight = () => {
 .portfolio-button:hover {
 	border-color: #2563eb;
 	color: #2563eb;
+}
+
+.portfolio-button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	pointer-events: none;
 }
 
 .search-button {
@@ -709,5 +753,41 @@ const adjustTextareaHeight = () => {
 .info-button:hover {
 	color: #535bf2;
 	background: rgba(83, 91, 242, 0.1);
+}
+
+.portfolio-button .tooltip {
+    visibility: hidden;
+    position: absolute;
+    background-color: #374151;
+    color: white;
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    width: max-content;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 5px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.portfolio-button .tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #374151 transparent transparent transparent;
+}
+
+.portfolio-button:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
 }
 </style>
