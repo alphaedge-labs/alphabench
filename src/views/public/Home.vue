@@ -11,7 +11,7 @@ const navigateToApp = () => {
 const demoUrl = "https://www.youtube.com/@alphabench";
 
 const openDemo = () => {
-  window.open(demoUrl, '_blank');
+	window.open(demoUrl, "_blank");
 };
 </script>
 
@@ -23,7 +23,7 @@ const openDemo = () => {
 				<span class="beta-label">preview</span>
 			</h1>
 			<p class="subtitle">
-				Your personal quantitative research assistant <br/>
+				Your personal quantitative research assistant <br />
 				analyzing your portfolio and backtesting strategies.
 			</p>
 
@@ -48,20 +48,17 @@ const openDemo = () => {
 			<router-link to="/pricing">Pricing</router-link>
 		</div>
 	</div>
-    <component :is="'script'" type="application/ld+json">
-      {
-		"@context": "https://schema.org",
-		"@type": "SoftwareApplication",
-		"name": "alphabench",
-		"applicationCategory": "FinanceApplication",
-		"description": "Test your trading strategies in natural language",
-		"offers": {
-			"@type": "Offer",
-			"price": "0",
-			"priceCurrency": "USD"
-		}
-	}
-    </component>
+	<component :is="'script'" type="application/ld+json">
+		{ "@context": "https://schema.org", "@type": "WebSite", "name":
+		"alphabench", "url": "https://alphabench.in/", "description": "Test your
+		trading strategies in natural language", "potentialAction": { "@type":
+		"SearchAction", "target":
+		"https://alphabench.in/search?q={search_term_string}", "query-input":
+		"required name=search_term_string" }, "sameAs": [
+		"https://www.youtube.com/@alphabench", "https://www.crunchbase.com/organization/alphabench" ], "applicationCategory":
+		"FinanceApplication", "offers": { "@type": "Offer", "price": "0",
+		"priceCurrency": "USD" } }
+	</component>
 </template>
 
 <style scoped>
@@ -90,7 +87,7 @@ h1 {
 	justify-content: center;
 	gap: 0.5rem;
 	flex-wrap: wrap;
-    cursor: pointer;
+	cursor: pointer;
 }
 
 .subtitle {
@@ -169,7 +166,7 @@ button {
 	font-weight: 500;
 	letter-spacing: 0.05em;
 	vertical-align: super;
-    cursor: pointer;
+	cursor: pointer;
 }
 
 @media (max-width: 768px) {

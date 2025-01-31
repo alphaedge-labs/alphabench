@@ -43,6 +43,8 @@
 					:placeholder="inputPlaceholder"
 					v-model="searchQuery"
 					@keyup.enter="handleSearch"
+					@input="adjustTextareaHeight"
+					ref="textarea"
 					rows="1"
 				></textarea>
 				<button
@@ -157,6 +159,7 @@ const hasPortfolio = ref(false);
 const isLoading = ref(false);
 const portfolioStocks = ref([]);
 const showSearchInfo = ref(false);
+const textarea = ref(null);
 
 const defaultSnippets = [
 	"What's the best stock to buy today?",
@@ -236,6 +239,16 @@ const handleSearch = async () => {
 		isLoading.value = false;
 	}
 };
+
+const adjustTextareaHeight = () => {
+	const element = textarea.value;
+	if (!element) return;
+	
+	// Reset height to auto to get the correct scrollHeight
+	element.style.height = 'auto';
+	// Set the height to match the content
+	element.style.height = element.scrollHeight + 'px';
+};
 </script>
 
 <style scoped>
@@ -301,6 +314,8 @@ const handleSearch = async () => {
 	max-height: 100px;
 	overflow-y: auto;
 	font-family: unset;
+	height: auto;
+	overflow-y: hidden; /* Hide scrollbar when expanding */
 }
 
 .search-input::placeholder {

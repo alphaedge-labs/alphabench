@@ -1,5 +1,9 @@
 <template>
   <div class="portfolio-view">
+    <div v-if="isLoading" class="loading-overlay">
+      <div class="spinner"></div>
+    </div>
+    
     <div class="portfolio-header">
       <h3>Your Portfolio</h3>
       <div class="header-actions">
@@ -21,7 +25,10 @@
     <div class="portfolio-stats">
       <div class="stat-card">
         <span class="stat-label">Total Value</span>
-        <span class="stat-value">₹{{ totalValue.toLocaleString() }}</span>
+        <span class="stat-value">
+          <template v-if="!isLoading">₹{{ totalValue.toLocaleString() }}</template>
+          <template v-else>--</template>
+        </span>
       </div>
       <div class="stat-card">
         <span class="stat-label">Total Stocks</span>
@@ -44,7 +51,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
 const props = defineProps({
   stocks: {
@@ -55,6 +62,8 @@ const props = defineProps({
 
 const emit = defineEmits(['edit', 'delete']);
 const showDeleteConfirm = ref(false);
+const isLoading = ref(true);
+const portfolioData = ref([]);
 
 const totalValue = computed(() => {
   return props.stocks.reduce((total, stock) => {
@@ -74,6 +83,25 @@ const handleDelete = () => {
   emit('delete');
   showDeleteConfirm.value = false;
 };
+
+// Mock API call
+const fetchPortfolioData = async () => {
+  isLoading.value = true;
+  try {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    // Mock data - replace this with your actual API call
+    portfolioData.value = props.stocks;
+  } catch (error) {
+    console.error('Error fetching portfolio data:', error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchPortfolioData();
+});
 </script>
 
 <style scoped>
@@ -363,5 +391,28 @@ const handleDelete = () => {
   .stock-details {
     grid-template-columns: 1fr;
   }
+}
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: grid;
+  place-items: center;
+  border-radius: 1.25rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #535bf2;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style> 

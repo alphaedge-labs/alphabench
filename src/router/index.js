@@ -19,31 +19,58 @@ const routes = [
 			{
 				path: "",
 				name: "home",
-				meta: { title: "Home | alphabench" },
+				meta: {
+					title: "Home | alphabench",
+					description:
+						"Test your trading strategies in natural language",
+					keywords:
+						"trading strategy, backtesting, algorithmic trading, stock market, financial analysis, algorithmic trading strategies, backtesting trading strategies, investment analysis, quantitative trading, automated trading, technical analysis, financial markets, trading indicators, portfolio optimization, risk management, market analysis, trading automation, trading signals, trading performance, trading metrics, trading platform, trading tools, trading software, trading education, trading research, trading analytics, trading data, trading insights",
+				},
 				component: () => import("../views/public/Home.vue"),
 			},
 			{
 				path: "how-to",
 				name: "how to use",
-				meta: { title: "How to use | alphabench" },
+				meta: {
+					title: "How to use | alphabench",
+					description:
+						"Learn how to use alphabench to test your trading strategies in natural language",
+					keywords:
+						"trading strategy, backtesting, algorithmic trading, stock market, financial analysis, algorithmic trading strategies, backtesting trading strategies, investment analysis, quantitative trading, automated trading, technical analysis, financial markets, trading indicators, portfolio optimization, risk management, market analysis, trading automation, trading signals, trading performance, trading metrics, trading platform, trading tools, trading software, trading education, trading research, trading analytics, trading data, trading insights",
+				},
 				component: () => import("../views/public/HowTo.vue"),
 			},
 			{
 				path: "pricing",
 				name: "pricing",
-				meta: { title: "Pricing | alphabench" },
+				meta: {
+					title: "Pricing | alphabench",
+					description: "See the pricing plans for alphabench",
+					keywords:
+						"trading strategy, backtesting, algorithmic trading, stock market, financial analysis, algorithmic trading strategies, backtesting trading strategies, investment analysis, quantitative trading, automated trading, technical analysis, financial markets, trading indicators, portfolio optimization, risk management, market analysis, trading automation, trading signals, trading performance, trading metrics, trading platform, trading tools, trading software, trading education, trading research, trading analytics, trading data, trading insights",
+				},
 				component: () => import("../views/public/Pricing.vue"),
 			},
 			{
 				path: "terms",
 				name: "terms",
-				meta: { title: "Terms | alphabench" },
+				meta: {
+					title: "Terms | alphabench",
+					description: "Read the terms of service for alphabench",
+					keywords:
+						"trading strategy, backtesting, algorithmic trading, stock market, financial analysis, algorithmic trading strategies, backtesting trading strategies, investment analysis, quantitative trading, automated trading, technical analysis, financial markets, trading indicators, portfolio optimization, risk management, market analysis, trading automation, trading signals, trading performance, trading metrics, trading platform, trading tools, trading software, trading education, trading research, trading analytics, trading data, trading insights",
+				},
 				component: () => import("../views/public/Terms.vue"),
 			},
 			{
 				path: "privacy-policy",
 				name: "privacy-policy",
-				meta: { title: "Privacy Policy | alphabench" },
+				meta: {
+					title: "Privacy Policy | alphabench",
+					description: "Read the privacy policy for alphabench",
+					keywords:
+						"trading strategy, backtesting, algorithmic trading, stock market, financial analysis, algorithmic trading strategies, backtesting trading strategies, investment analysis, quantitative trading, automated trading, technical analysis, financial markets, trading indicators, portfolio optimization, risk management, market analysis, trading automation, trading signals, trading performance, trading metrics, trading platform, trading tools, trading software, trading education, trading research, trading analytics, trading data, trading insights",
+				},
 				component: () => import("../views/public/PrivacyPolicy.vue"),
 			},
 		],
@@ -55,19 +82,34 @@ const routes = [
 			{
 				path: "login",
 				name: "login",
-				meta: { title: "Login | alphabench" },
+				meta: {
+					title: "Login | alphabench",
+					description: "Login to your alphabench account",
+					keywords:
+						"trading strategy, backtesting, algorithmic trading, stock market, financial analysis, algorithmic trading strategies, backtesting trading strategies, investment analysis, quantitative trading, automated trading, technical analysis, financial markets, trading indicators, portfolio optimization, risk management, market analysis, trading automation, trading signals, trading performance, trading metrics, trading platform, trading tools, trading software, trading education, trading research, trading analytics, trading data, trading insights",
+				},
 				component: () => import("../views/auth/Login.vue"),
 			},
 			{
 				path: "signup",
 				name: "signup",
-				meta: { title: "Signup | alphabench" },
+				meta: {
+					title: "Signup | alphabench",
+					description: "Signup for an alphabench account",
+					keywords:
+						"trading strategy, backtesting, algorithmic trading, stock market, financial analysis, algorithmic trading strategies, backtesting trading strategies, investment analysis, quantitative trading, automated trading, technical analysis, financial markets, trading indicators, portfolio optimization, risk management, market analysis, trading automation, trading signals, trading performance, trading metrics, trading platform, trading tools, trading software, trading education, trading research, trading analytics, trading data, trading insights",
+				},
 				component: () => import("../views/auth/Signup.vue"),
 			},
 			{
 				path: "google/callback",
 				name: "google-callback",
-				meta: { title: "Auth Callback | alphabench" },
+				meta: {
+					title: "Auth Callback | alphabench",
+					description: "Auth callback for alphabench",
+					keywords:
+						"trading strategy, backtesting, algorithmic trading, stock market, financial analysis, algorithmic trading strategies, backtesting trading strategies, investment analysis, quantitative trading, automated trading, technical analysis, financial markets, trading indicators, portfolio optimization, risk management, market analysis, trading automation, trading signals, trading performance, trading metrics, trading platform, trading tools, trading software, trading education, trading research, trading analytics, trading data, trading insights",
+				},
 				component: () => import("../views/auth/GoogleCallback.vue"),
 			},
 		],
@@ -79,20 +121,36 @@ const routes = [
 			{
 				path: "",
 				name: "main",
-				meta: { title: "Playground | alphabench" },
-				component: () => import("../views/app/Main.vue")
+				meta: {
+					title: "Playground | alphabench",
+					description: "Playground for alphabench",
+					keywords:
+						"trading strategy, backtesting, algorithmic trading, stock market, financial analysis, algorithmic trading strategies, backtesting trading strategies, investment analysis, quantitative trading, automated trading, technical analysis, financial markets, trading indicators, portfolio optimization, risk management, market analysis, trading automation, trading signals, trading performance, trading metrics, trading platform, trading tools, trading software, trading education, trading research, trading analytics, trading data, trading insights",
+				},
+				component: () => import("../views/app/Main.vue"),
 			},
 			{
 				path: "/results/:id",
 				name: "results",
 				component: () => import("../views/app/Results.vue"),
-				meta: { title: "Results | alphabench" }
+				meta: {
+					title: "Results | alphabench",
+					description: "Results for alphabench",
+					keywords:
+						"trading strategy, backtesting, algorithmic trading, stock market, financial analysis, algorithmic trading strategies, backtesting trading strategies, investment analysis, quantitative trading, automated trading, technical analysis, financial markets, trading indicators, portfolio optimization, risk management, market analysis, trading automation, trading signals, trading performance, trading metrics, trading platform, trading tools, trading software, trading education, trading research, trading analytics, trading data, trading insights",
+				},
 			},
 			{
 				path: "profile",
 				name: "profile",
-				component: () => import("../views/app/Profile.vue")
-			}
+				component: () => import("../views/app/Profile.vue"),
+				meta: {
+					title: "Profile | alphabench",
+					description: "Profile for alphabench",
+					keywords:
+						"trading strategy, backtesting, algorithmic trading, stock market, financial analysis, algorithmic trading strategies, backtesting trading strategies, investment analysis, quantitative trading, automated trading, technical analysis, financial markets, trading indicators, portfolio optimization, risk management, market analysis, trading automation, trading signals, trading performance, trading metrics, trading platform, trading tools, trading software, trading education, trading research, trading analytics, trading data, trading insights",
+				},
+			},
 			// Add more protected routes here
 		],
 	},
@@ -117,11 +175,9 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
 	const authStore = useAuthStore();
 
-	// Set document title from route meta first
-	document.title = to.meta.title || import.meta.env.VITE_APP_DEFAULT_TITLE;
+	updateMetaTags(to);
 
-    updateMetaTags(to);
-	if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    if (to.meta.requiresAuth && !authStore.isAuthenticated) {
 		next({ name: "login", query: { redirect: to.fullPath } });
 	} else if (authStore.isAuthenticated && to.path.startsWith("/auth/")) {
 		next({ name: "main" });

@@ -107,7 +107,7 @@ defineEmits(['close'])
 }
 
 h2 {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   text-align: left;
   margin: 0 0 2rem;
   background: linear-gradient(45deg, #111111, #535bf2);

@@ -136,14 +136,14 @@
 
       <div class="modal-footer">
         <div class="disclaimer">
-          <p>We're only supporting NSE stocks for preview version. Futures and options will be supported in future.</p>
+          <p>We're only supporting NSE stocks for preview version. Mutual funds, futures and options will be supported in future.</p>
         </div>
         <button 
           class="submit-button"
           :disabled="!canSubmit"
           @click="handleSubmit"
         >
-          Save Portfolio
+          Add Portfolio
         </button>
       </div>
     </div>
@@ -180,7 +180,7 @@ const filteredAssets = computed(() => {
 const stockBundles = [
   {
     id: 1,
-    name: 'Nifty 50',
+    name: 'NIFTY 50',
     description: '50 equally weighted stocks from India\'s top companies',
     stocks: [
       { 
@@ -198,7 +198,7 @@ const stockBundles = [
   },
   {
     id: 2,
-    name: 'Nifty Bank',
+    name: 'NIFTY BANK',
     description: 'Top banking sector stocks',
     stocks: [
       { 
@@ -317,11 +317,13 @@ h3 {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  text-align: left;
 }
 
 .description {
   color: #6b7280;
   margin-bottom: 1.5rem;
+  text-align: left;
 }
 
 .close-button {
@@ -566,6 +568,7 @@ h3 {
   color: #6b7280;
   line-height: 1.4;
   margin: 0;
+  text-align: left;
 }
 
 .submit-button {
