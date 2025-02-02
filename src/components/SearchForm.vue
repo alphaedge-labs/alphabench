@@ -169,16 +169,16 @@ const strategySnippets = [
 		text: "Buy when 14-period RSI drops below 30 using 5-minute intervals and closing prices. Sell when RSI crosses above 70. Stop loss at 1% below entry price. Exit all positions at end of day",
 	},
 	{
-		title: "Double bottom pattern strategy",
-		text: "Buy when double bottom pattern forms (two lows within 0.1% of each other in 30-minute window). Sell when price moves 0.5% above the peak between the two lows. Stop loss at 0.2% below second low",
-	},
-	{
 		title: "Triple EMA Strategy",
 		text: "Buy when 8-period EMA crosses above 13-period EMA and both cross above 21-period EMA. Sell when 8-period EMA crosses below 13-period EMA. Use 15-minute chart. Stop loss at recent swing low.",
 	},
 	{
 		title: "Support/Resistance Breakout",
 		text: "Identify key support/resistance levels from 1-hour chart. Buy on breakout above resistance with volume confirmation. Target: Distance between support and resistance. Stop loss: 50% of that distance.",
+	},
+	{
+		title: "Double bottom pattern strategy",
+		text: "Buy when double bottom pattern forms (two lows within 0.1% of each other in 30-minute window). Sell when price moves 0.5% above the peak between the two lows. Stop loss at 0.2% below second low",
 	},
 	{
 		title: "Stochastic RSI Crossover",
@@ -529,14 +529,13 @@ const adjustTextareaHeight = () => {
 }
 
 .portfolio-button:hover {
-	border-color: #2563eb;
-	color: #2563eb;
+	border-color: #d1d5db;
+	color: #6b7280;
 }
 
 .portfolio-button:disabled {
 	opacity: 0.5;
 	cursor: not-allowed;
-	pointer-events: none;
 }
 
 .search-button {
@@ -756,23 +755,23 @@ const adjustTextareaHeight = () => {
 }
 
 .portfolio-button .tooltip {
-    visibility: hidden;
     position: absolute;
-    background-color: #374151;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%) translateY(5px);
+    background-color: #535bf2;
     color: white;
     text-align: center;
-    padding: 5px 10px;
+    padding: 8px 12px;
     border-radius: 6px;
-    font-size: 12px;
-    width: max-content;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-bottom: 5px;
-    opacity: 0;
-    transition: opacity 0.2s;
-    pointer-events: none;
+    font-size: 13px;
+    font-weight: 500;
     white-space: nowrap;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+    pointer-events: none;
 }
 
 .portfolio-button .tooltip::after {
@@ -780,14 +779,21 @@ const adjustTextareaHeight = () => {
     position: absolute;
     top: 100%;
     left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
+    transform: translateX(-50%);
+    border-width: 6px;
     border-style: solid;
-    border-color: #374151 transparent transparent transparent;
+    border-color: #535bf2 transparent transparent transparent;
 }
 
 .portfolio-button:hover .tooltip {
     visibility: visible;
     opacity: 1;
+}
+
+@media (max-width: 600px) {
+    .portfolio-button .tooltip {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
 }
 </style>
