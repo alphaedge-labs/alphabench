@@ -69,7 +69,7 @@
 							<line x1="12" y1="5" x2="12" y2="19"></line>
 							<line x1="5" y1="12" x2="19" y2="12"></line>
 						</svg>
-						<span class="tooltip">Backtest on portfolio, coming soon</span>
+						<span class="tooltip">Backtest on portfolio, coming soon!</span>
 					</button>
 				</div>
 				<Transition name="fade">
@@ -649,7 +649,7 @@ const adjustTextareaHeight = () => {
 		padding: 0.5rem 1rem;
 		padding-left: 2.5rem;
 		padding-right: 5rem;
-		border-radius: 0.6rem;
+		border-radius: 1rem;
 	}
 
 	.search-input-wrapper::before {
@@ -756,7 +756,7 @@ const adjustTextareaHeight = () => {
 
 .portfolio-button .tooltip {
     position: absolute;
-    bottom: 120%;
+    bottom: 135%;
     left: 50%;
     transform: translateX(-50%) translateY(5px);
     background-color: #535bf2;

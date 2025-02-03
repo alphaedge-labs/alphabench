@@ -91,17 +91,6 @@ const routes = [
 				component: () => import("../views/auth/Login.vue"),
 			},
 			{
-				path: "signup",
-				name: "signup",
-				meta: {
-					title: "Signup | alphabench",
-					description: "Signup for an alphabench account",
-					keywords:
-						"trading strategy, backtesting, algorithmic trading, stock market, financial analysis, algorithmic trading strategies, backtesting trading strategies, investment analysis, quantitative trading, automated trading, technical analysis, financial markets, trading indicators, portfolio optimization, risk management, market analysis, trading automation, trading signals, trading performance, trading metrics, trading platform, trading tools, trading software, trading education, trading research, trading analytics, trading data, trading insights",
-				},
-				component: () => import("../views/auth/Signup.vue"),
-			},
-			{
 				path: "google/callback",
 				name: "google-callback",
 				meta: {
@@ -150,6 +139,11 @@ const routes = [
 					keywords:
 						"trading strategy, backtesting, algorithmic trading, stock market, financial analysis, algorithmic trading strategies, backtesting trading strategies, investment analysis, quantitative trading, automated trading, technical analysis, financial markets, trading indicators, portfolio optimization, risk management, market analysis, trading automation, trading signals, trading performance, trading metrics, trading platform, trading tools, trading software, trading education, trading research, trading analytics, trading data, trading insights",
 				},
+			},
+			{
+				path: "/chat",
+				name: "chat",
+				component: () => import("../views/app/Chat.vue"),
 			},
 			// Add more protected routes here
 		],
