@@ -37,8 +37,8 @@ const loginWithGoogle = async () => {
 	<div class="login-page">
 		<router-link class="back-link" @click="$router.go(-1)">&larr; Back</router-link>
 		<div class="login-container">
-			<h1>Login</h1>
-			<p class="subtitle">Use your registered Google account to continue</p>
+			<h1>Get Started</h1>
+			<p class="subtitle">Use your Google account to sign in.<br/>If you don’t already have an account, we’ll create one for you.</p>
 
 			<div class="social-login">
 				<button @click="loginWithGoogle" class="google-login-btn">
@@ -75,10 +75,17 @@ const loginWithGoogle = async () => {
 				<button type="submit" class="primary-btn">Sign in</button>
 			</form> -->
 
-			<p class="signup-link">
+			<!--<p class="signup-link">
 				Don't have an account?
 				<router-link to="/auth/signup">Sign up</router-link>
-			</p>
+			</p>-->
+		</div>
+		<div class="legal-links">
+			<router-link to="/terms">Terms</router-link>
+			<span class="separator">•</span>
+			<router-link to="/privacy-policy">Privacy Policy</router-link>
+			<span class="separator">•</span>
+			<router-link to="/pricing">Pricing</router-link>
 		</div>
 	</div>
 </template>
@@ -239,5 +246,42 @@ input:focus {
 
 .back-link:hover {
 	color: #111111;
+}
+
+.legal-links {
+	position: absolute;
+	bottom: 2rem;
+	left: 0;
+	right: 0;
+	margin-top: 2rem;
+	font-size: 0.8rem;
+	color: #666;
+}
+
+.legal-links a {
+	color: #535bf2;
+	text-decoration: none;
+	cursor: pointer;
+	transition: color 0.3s ease;
+    margin: 0 0.5rem;
+}
+
+.legal-links a:hover {
+	color: #111111;
+}
+
+
+@media (max-width: 480px) {
+	.legal-links {
+		bottom: 1rem;
+		font-size: 0.8rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.legal-links .separator {
+		display: none;
+	}
 }
 </style>
