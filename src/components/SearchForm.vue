@@ -145,6 +145,7 @@ import PortfolioModal from "./PortfolioModal.vue";
 import PortfolioView from "./PortfolioView.vue";
 import SearchInfoModal from "./SearchInfoModal.vue";
 import CustomAlert from "./CustomAlert.vue";
+import { useRouter } from "vue-router";
 
 const searchQuery = ref("");
 const loading = ref(false);
@@ -158,6 +159,7 @@ const portfolioStocks = ref([]);
 const showSearchInfo = ref(false);
 const textarea = ref(null);
 const error = ref("");
+const router = useRouter();
 
 const strategySnippets = [
 	{
@@ -250,17 +252,26 @@ const handleSearch = async () => {
 	error.value = ""; // Clear any previous errors
 	
 	try {
-		// Simulate API call - replace with actual API call
-		await new Promise((resolve, reject) => {
-			setTimeout(() => {
-				// Simulate random failure for demo
-				if (Math.random() > 0.5) {
-					reject(new Error("Network error: Failed to fetch search results"));
-				}
-				resolve();
-			}, 4000);
-		});
-		// Handle search result
+		// const response = await fetch('/api/conversations', {
+		// 	method: 'POST',
+		// 	body: JSON.stringify({ query: searchQuery.value }),
+		// 	headers: {
+		// 		'Content-Type': 'application/json'
+		// 	}
+		// });
+		// Simulate API delay
+		await new Promise(resolve => setTimeout(resolve, 1500));
+		
+		// Simulate API response with 20% chance of error
+		if (Math.random() < 0.2) {
+			throw new Error("Failed to create conversation");
+		}
+		//if (!response.ok) throw new Error('Failed to create conversation');
+		
+		// Mock successful response
+        // const { conversationId } = await response.json();
+		const conversationId = `conv_${Date.now()}`;
+		router.push(`/chat/${conversationId}`);
 	} catch (err) {
 		error.value = err.message || "An unexpected error occurred";
 	} finally {

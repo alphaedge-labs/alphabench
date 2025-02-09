@@ -1,104 +1,145 @@
 <template>
 	<div class="chat-outer-container">
-		<div class="chat-container" ref="chatContainer">
-			<div class="messages-container">
-				<div
-					v-for="message in messages"
-					:key="message.id"
-					class="message"
-					:class="message.role"
-					:style="{
-						animation:
-							message.role === 'assistant'
-								? 'fadeIn 0.5s ease'
-								: 'fadeIn 0.5s ease',
-					}"
-				>
+		<div v-if="error" class="error-container">
+			<p class="error-message">{{ error }}</p>
+			<button @click="handleError" class="error-action">
+				Start New Conversation
+			</button>
+		</div>
+		
+		<template v-else>
+			<div class="chat-container" ref="chatContainer">
+				<div class="messages-container">
 					<div
-						class="message-avatar"
-						v-if="message.role === 'assistant'"
+						v-for="message in messages"
+						:key="message.id"
+						class="message"
+						:class="message.role"
+						:style="{
+							animation:
+								message.role === 'assistant'
+									? 'fadeIn 0.5s ease'
+									: 'fadeIn 0.5s ease',
+						}"
 					>
-						<img
-							:src="alphabenchLogo"
-							width="24"
-							height="24"
-							alt="Alphabench Logo"
-						/>
-					</div>
-					<div class="message-content-wrapper">
-						<div class="message-content">
-							<template v-if="message.type === 'backtest'">
-								<BacktestResults :data="message.data" />
-							</template>
-							<template v-else-if="message.type === 'loading'">
-								<div class="loading-message">Processing...</div>
-							</template>
-							<template v-else>
-								{{ message.content }}
-							</template>
+						<div
+							class="message-avatar"
+							v-if="message.role === 'assistant'"
+						>
+							<img
+								:src="alphabenchLogo"
+								width="24"
+								height="24"
+								alt="Alphabench Logo"
+							/>
+						</div>
+						<div class="message-content-wrapper">
+							<div class="message-content">
+								<template v-if="message.type === 'backtest'">
+									<BacktestResults :data="message.data" />
+								</template>
+								<template v-else-if="message.type === 'loading'">
+									<div class="loading-message">Processing...</div>
+								</template>
+								<template v-else>
+                                    <!--<TextGenerateEffect 
+                                        v-if="message.role === 'assistant'"
+                                        :text="message.content"
+                                        :duration="0.5"
+                                    />
+                                    <div v-else>
+                                        {{ message.content }}
+                                    </div>-->
+                                    <div class="message-content-text">
+                                        {{ message.content }}
+                                    </div>
+                                </template>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
 
-		<div class="chat-input-container">
-			<div class="input-wrapper">
-				<textarea
-					class="chat-input"
-					v-model="userInput"
-					placeholder="Message alphabench"
-					@input="adjustTextareaHeight"
-					@keydown.enter.prevent="handleSubmit"
-					ref="textarea"
-					rows="1"
-				></textarea>
-				<button
-					class="send-button"
-					@click="handleSubmit"
-					:disabled="!userInput.trim()"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="16"
-						height="16"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
+			<div v-if="!error" class="chat-input-container">
+				<div class="input-wrapper">
+					<textarea
+						class="chat-input"
+						v-model="userInput"
+						placeholder="Message alphabench"
+						@input="adjustTextareaHeight"
+						@keydown.enter.prevent="handleSubmit"
+						ref="textarea"
+						rows="1"
+					></textarea>
+					<button
+						class="send-button"
+						@click="handleSubmit"
+						:disabled="!userInput.trim()"
 					>
-						<line x1="22" y1="2" x2="11" y2="13"></line>
-						<polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-					</svg>
-				</button>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<line x1="22" y1="2" x2="11" y2="13"></line>
+							<polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+						</svg>
+					</button>
+				</div>
+				<div class="disclaimer">
+					alphabench can make mistakes. Please check important info.
+				</div>
 			</div>
-			<div class="disclaimer">
-				alphabench can make mistakes. Please check important info.
-			</div>
-		</div>
+		</template>
 	</div>
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from "vue";
+import { ref, onMounted, nextTick, watch, onUnmounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import alphabenchLogo from "../assets/alphabench-chat.svg";
 import BacktestResults from "./BacktestResults.vue";
+import TextGenerateEffect from "./TextGenerateEffect.vue";
 
+const route = useRoute();
+const router = useRouter();
 const chatContainer = ref(null);
 const textarea = ref(null);
 const userInput = ref("");
-const messages = ref([
+const messages = ref([]);
+const error = ref(null);
+const isLoading = ref(true);
+
+const mockMessages = [
+	{
+		id: 1,
+		role: "user",
+		type: "text",
+		content: "Backtest some RELIANCE:NSE for past 3 months with a stoploss of 5% and a target of 10% on 1 minute timeframe"
+	},
 	{
 		id: 3,
-		role: "user",
-		content:
-			"Buy when 14-period RSI drops below 30 using 5-minute intervals and closing prices. Sell when RSI crosses above 70. Stop loss at 1% below entry price. Exit all positions at end of day on 2024-01-02 RELIANCE:NSE",
-	},
-	{ id: 4, role: "assistant", type: "loading", content: "Processing..." },
+		role: "assistant",
+		type: "loading",
+		content: "Processing..."
+	}
+];
+
+const mockWebSocketMessages = [
 	{
-		id: 2,
+		id: 3,
+		role: "assistant",
+		type: "text",
+		content: "Based on my analysis, this is the backtest results for the tech stocks with high growth potential"
+	},
+	{
+		id: 4,
 		role: "assistant",
 		type: "backtest",
 		content: "",
@@ -130,8 +171,89 @@ const messages = ref([
 			},
 		},
 	},
-	// ... More messages for testing
-]);
+];
+
+const loadConversation = async (conversationId) => {
+	try {
+        // const response = await fetch(`/api/conversations/${conversationId}`);
+        // if (!response.ok) throw new Error('Failed to load conversation');
+        // const data = await response.json();
+        // messages.value = data.messages;
+
+
+        // remove everything below here
+		// Simulate API delay
+		await new Promise(resolve => setTimeout(resolve, 1000));
+		
+		// Simulate API error 10% of the time
+		if (Math.random() < 0.1) {
+			throw new Error('Failed to load conversation');
+		}
+		
+		messages.value = mockMessages;
+	} catch (err) {
+		error.value = err.message;
+	} finally {
+		isLoading.value = false;
+	}
+};
+
+const setupWebSocket = (conversationId) => {
+	/* 
+        const ws = new WebSocket(`${import.meta.env.VITE_APP_WEBSOCKET_BASE_URL}/
+        conversations/${conversationId}`);
+        
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            const messageIndex = messages.value.findIndex(m => m.id === data.id);
+            
+            if (messageIndex !== -1) {
+                messages.value[messageIndex] = data;
+            } else {
+                messages.value.push(data);
+            }
+            scrollToBottom();
+        };
+
+        return ws;
+    */
+
+    // Simulate WebSocket messages
+	const mockWs = {
+		close: () => console.log('Mock WebSocket closed')
+	};
+	
+	// Simulate incoming messages with delays
+	mockWebSocketMessages.forEach((msg, index) => {
+		setTimeout(() => {
+			const messageIndex = messages.value.findIndex(m => m.id === msg.id);
+			
+			if (messageIndex !== -1) {
+				messages.value[messageIndex] = msg;
+			} else {
+				messages.value.push(msg);
+			}
+			scrollToBottom();
+		}, (index + 1) * 2000); // Send a new message every 2 seconds
+	});
+	
+	return mockWs;
+};
+
+onMounted(async () => {
+	if (route.params.conversationId) {
+		await loadConversation(route.params.conversationId);
+		const ws = setupWebSocket(route.params.conversationId);
+		
+		onUnmounted(() => {
+			ws.close();
+		});
+	}
+});
+
+const handleError = () => {
+	router.push('/chat');
+};
 
 const adjustTextareaHeight = () => {
 	const element = textarea.value;
@@ -152,46 +274,67 @@ const handleSubmit = () => {
 	if (!userInput.value.trim()) return;
 
 	// Add user message
-	messages.value.push({
+	//  messages.value.push({
+    const userMessage = {
 		id: Date.now(),
 		role: "user",
 		type: "text",
 		content: userInput.value,
-	});
+	};
+	messages.value.push(userMessage);
 
 	// Clear input
 	userInput.value = "";
-
-	// Reset textarea height
 	adjustTextareaHeight();
 
-	setTimeout(() => {
-		messages.value.push({
-			id: Date.now(),
-			role: "assistant",
-			type: "loading",
-			content: "Processing...",
-		});
-	}, 4000);
+	/*
+    setTimeout(() => {
+        messages.value.push({
+            id: Date.now(),
+            role: "assistant",
+            type: "loading",
+            content: "Processing...",
+        });
+    }, 4000);
 
-	// Scroll to bottom
-	scrollToBottom();
+    // Scroll to bottom
+    scrollToBottom();
+    */
+    
+    // Add loading message
+	const loadingMessage = {
+		id: Date.now() + 1,
+		role: "assistant",
+		type: "loading",
+		content: "Processing...",
+	};
+	
+	setTimeout(() => {
+		messages.value.push(loadingMessage);
+		scrollToBottom();
+	}, 500);
 
 	// Simulate assistant response
 	setTimeout(() => {
-		messages.value.push({
-			id: Date.now(),
+        /*
+        messages.value.push({
+            id: Date.now(),
+        */
+		const assistantMessage = {
+			id: loadingMessage.id,
 			role: "assistant",
 			type: "text",
-			content: "This is a sample response.",
-		});
+			content: ["Here's a simulated response to your query. In a real implementation, this would be replaced with actual API responses.", "Here are the results of the backtest:", "What do you think about this?", "Here are some other stocks you might consider: TECH1, TECH2, TECH3", "What do you think about this?"][Math.floor(Math.random() * 5)],
+		};
+		
+		const messageIndex = messages.value.findIndex(m => m.id === loadingMessage.id);
+		if (messageIndex !== -1) {
+			messages.value[messageIndex] = assistantMessage;
+		}
+		
 		scrollToBottom();
-	}, 1000);
+	}, 3000);
 };
-
-onMounted(() => {
-	scrollToBottom();
-});
 </script>
 
 <style scoped>
@@ -282,6 +425,11 @@ onMounted(() => {
 /* Actual text content of the message */
 .message-content {
 	color: #374151;
+	font-size: 0.9rem;
+	line-height: 1.4;
+}
+
+.message-content-text {
 	font-size: 0.9rem;
 	line-height: 1.4;
 }
@@ -427,7 +575,7 @@ onMounted(() => {
 	-webkit-text-fill-color: transparent;
 	background-size: 200% 100%;
 	animation: wave 2s linear infinite;
-	padding: 0.25rem 0.5rem;
+	padding: 0.25rem 0.5rem 0.25rem 0;
 	font-weight: 500;
 	border-radius: 0.25rem;
 }
@@ -439,5 +587,35 @@ onMounted(() => {
 	100% {
 		background-position: -200% 0;
 	}
+}
+
+.error-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 2rem;
+	text-align: center;
+	gap: 1rem;
+}
+
+.error-message {
+	color: #ef4444;
+	font-size: 0.875rem;
+}
+
+.error-action {
+	padding: 0.5rem 1rem;
+	background: #535bf2;
+	color: white;
+	border: none;
+	border-radius: 0.5rem;
+	cursor: pointer;
+	font-size: 0.875rem;
+	transition: background-color 0.2s;
+}
+
+.error-action:hover {
+	background: #4347d9;
 }
 </style>

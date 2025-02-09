@@ -1,9 +1,14 @@
 <script setup>
-import { onMounted } from "vue";
-
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 import ProfileDropdown from "../../components/ProfileDropdown.vue";
 import HamburgerMenu from "../../components/HamburgerMenu.vue";
 import Chatbox from "../../components/Chatbox.vue";
+import SearchForm from "../../components/SearchForm.vue";
+import TradingTerminal from "../../components/TradingTerminal.vue";
+
+const route = useRoute();
+const showSearch = computed(() => !route.params.conversationId);
 </script>
 
 <template>
@@ -17,8 +22,15 @@ import Chatbox from "../../components/Chatbox.vue";
 		</div>
 		<HamburgerMenu />
 		<div class="chatbox-wrapper">
-			<Chatbox />
+			<SearchForm v-if="showSearch" />
+			<Chatbox v-else />
 		</div>
+		<!--<div class="trading-terminal-wrapper">
+			<TradingTerminal 
+				symbol="AAPL"
+				:price="150.25"
+			/>
+		</div>-->
 	</div>
 </template>
 
@@ -74,6 +86,13 @@ import Chatbox from "../../components/Chatbox.vue";
   justify-content: center;
 }
 
+.trading-terminal-wrapper {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 100;
+}
+
 @media (max-width: 768px) {
 	.chatbox-wrapper {
 		margin-top: 4rem;
@@ -96,6 +115,11 @@ import Chatbox from "../../components/Chatbox.vue";
 
 	.beta-label {
 		font-size: 0.7rem;
+	}
+
+	.trading-terminal-wrapper {
+		bottom: 1rem;
+		right: 1rem;
 	}
 }
 
@@ -124,6 +148,11 @@ import Chatbox from "../../components/Chatbox.vue";
 	.beta-label {
 		font-size: 0.6rem;
 		padding: 0.15rem 0.4rem;
+	}
+
+	.trading-terminal-wrapper {
+		bottom: 0;
+		right: 0;
 	}
 }
 </style>

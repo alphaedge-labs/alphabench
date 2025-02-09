@@ -141,9 +141,10 @@ const routes = [
 				},
 			},
 			{
-				path: "/chat",
+				path: "/chat/:conversationId?",
 				name: "chat",
 				component: () => import("../views/app/Chat.vue"),
+				props: true
 			},
 			// Add more protected routes here
 		],
