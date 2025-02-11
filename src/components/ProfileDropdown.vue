@@ -260,6 +260,7 @@ const handleLogin = () => {
 }
 
 .login-button {
+    background-color: #ffffff;
 	position: relative;
 	padding: 0.5rem 1.5rem;
 	color: #535bf2;

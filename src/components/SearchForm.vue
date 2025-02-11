@@ -69,7 +69,7 @@
 							<line x1="12" y1="5" x2="12" y2="19"></line>
 							<line x1="5" y1="12" x2="19" y2="12"></line>
 						</svg>
-						<span class="tooltip">Backtest on portfolio, coming soon</span>
+						<span class="tooltip">Backtest on portfolio, coming soon!</span>
 					</button>
 				</div>
 				<Transition name="fade">
@@ -145,6 +145,7 @@ import PortfolioModal from "./PortfolioModal.vue";
 import PortfolioView from "./PortfolioView.vue";
 import SearchInfoModal from "./SearchInfoModal.vue";
 import CustomAlert from "./CustomAlert.vue";
+import { useRouter } from "vue-router";
 
 const searchQuery = ref("");
 const loading = ref(false);
@@ -158,6 +159,7 @@ const portfolioStocks = ref([]);
 const showSearchInfo = ref(false);
 const textarea = ref(null);
 const error = ref("");
+const router = useRouter();
 
 const strategySnippets = [
 	{
@@ -250,17 +252,26 @@ const handleSearch = async () => {
 	error.value = ""; // Clear any previous errors
 	
 	try {
-		// Simulate API call - replace with actual API call
-		await new Promise((resolve, reject) => {
-			setTimeout(() => {
-				// Simulate random failure for demo
-				if (Math.random() > 0.5) {
-					reject(new Error("Network error: Failed to fetch search results"));
-				}
-				resolve();
-			}, 4000);
-		});
-		// Handle search result
+		// const response = await fetch('/api/conversations', {
+		// 	method: 'POST',
+		// 	body: JSON.stringify({ query: searchQuery.value }),
+		// 	headers: {
+		// 		'Content-Type': 'application/json'
+		// 	}
+		// });
+		// Simulate API delay
+		await new Promise(resolve => setTimeout(resolve, 1500));
+		
+		// Simulate API response with 20% chance of error
+		if (Math.random() < 0.2) {
+			throw new Error("Failed to create conversation");
+		}
+		//if (!response.ok) throw new Error('Failed to create conversation');
+		
+		// Mock successful response
+        // const { conversationId } = await response.json();
+		const conversationId = `conv_${Date.now()}`;
+		router.push(`/chat/${conversationId}`);
 	} catch (err) {
 		error.value = err.message || "An unexpected error occurred";
 	} finally {
@@ -649,7 +660,7 @@ const adjustTextareaHeight = () => {
 		padding: 0.5rem 1rem;
 		padding-left: 2.5rem;
 		padding-right: 5rem;
-		border-radius: 0.6rem;
+		border-radius: 1rem;
 	}
 
 	.search-input-wrapper::before {
@@ -756,7 +767,7 @@ const adjustTextareaHeight = () => {
 
 .portfolio-button .tooltip {
     position: absolute;
-    bottom: 120%;
+    bottom: 135%;
     left: 50%;
     transform: translateX(-50%) translateY(5px);
     background-color: #535bf2;
